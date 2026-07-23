@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Custom PC Builds &mdash; MalachiteVR</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --green:  #3dffa0;
+      --green2: #1aff7a;
+      --dark:   #060a08;
+      --panel:  #0f1a14;
+      --border: #1e3328;
+      --muted:  #4a7a60;
+      --text:   #c8e8d8;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--dark); color: var(--text);
+      font-family: 'IBM Plex Mono', monospace; font-size: 15px;
+      line-height: 1.7; overflow-x: hidden;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 1000; opacity: 0.4;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    }
+    body::after {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.35;
+      background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 48px;
+      background: linear-gradient(to bottom, rgba(6,10,8,0.95), transparent);
+      backdrop-filter: blur(2px);
+    }
+    .nav-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--green); letter-spacing: 0.08em; text-decoration: none; }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; transition: color 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--green); }
+
+    /* WIP BANNER */
+    .wip-bar {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+      background: rgba(6,10,8,0.92); border-top: 1px solid var(--border);
+      backdrop-filter: blur(8px); padding: 12px 24px;
+      display: flex; align-items: center; justify-content: center;
+      gap: 10px; font-size: 0.75rem; letter-spacing: 0.06em; color: var(--muted);
+    }
+
+    /* HERO */
+    .page-hero {
+      position: relative; z-index: 1; min-height: 60vh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 140px 48px 80px; overflow: hidden;
+    }
+    .hero-glow { position: absolute; top: 10%; left: -10%; width: 700px; height: 700px; background: radial-gradient(circle, rgba(61,255,160,0.06) 0%, transparent 70%); pointer-events: none; }
+    .hero-tag { display: inline-block; font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--green); border: 1px solid var(--border); padding: 6px 14px; margin-bottom: 40px; opacity: 0; animation: fadeUp 0.6s 0.1s forwards; }
+    h1 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(3rem, 8vw, 7rem); line-height: 0.95; letter-spacing: -0.02em; color: #fff; max-width: 800px; opacity: 0; animation: fadeUp 0.7s 0.25s forwards; }
+    h1 span { color: var(--green); }
+    .hero-sub { margin-top: 32px; max-width: 540px; color: var(--muted); font-size: 0.9rem; line-height: 1.8; opacity: 0; animation: fadeUp 0.7s 0.45s forwards; }
+
+    /* SECTIONS */
+    section { position: relative; z-index: 1; padding: 80px 48px; }
+    .section-label { font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--green); margin-bottom: 48px; display: flex; align-items: center; gap: 16px; }
+    .section-label::after { content: ''; display: block; height: 1px; width: 60px; background: var(--border); }
+    h2 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: clamp(1.8rem, 3.5vw, 2.8rem); color: #fff; line-height: 1.1; margin-bottom: 20px; }
+
+    /* TIER CARDS */
+    #tiers { border-top: 1px solid var(--border); }
+    .tiers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2px; max-width: 1100px; }
+    .tier-card {
+      background: var(--panel); border: 1px solid var(--border);
+      padding: 40px; position: relative; overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .tier-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--green); transform: scaleX(0); transform-origin: left; transition: transform 0.4s; }
+    .tier-card:hover { border-color: var(--green); transform: translateY(-4px); }
+    .tier-card:hover::before { transform: scaleX(1); }
+    .tier-card.featured { border-color: rgba(61,255,160,0.4); }
+    .tier-card.featured::before { transform: scaleX(1); }
+    .featured-badge { display: inline-block; background: var(--green); color: var(--dark); font-size: 0.65rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; padding: 3px 10px; margin-bottom: 20px; }
+    .tier-name { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.5rem; color: #fff; margin-bottom: 8px; }
+    .tier-tagline { font-size: 0.78rem; color: var(--muted); margin-bottom: 28px; }
+    .tier-specs { list-style: none; margin-bottom: 28px; }
+    .tier-specs li { font-size: 0.8rem; color: var(--text); padding: 8px 0; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; gap: 10px; }
+    .tier-specs li:last-child { border-bottom: none; }
+    .tier-specs li::before { content: '\25B8'; color: var(--green); flex-shrink: 0; margin-top: 2px; }
+
+    /* PROCESS */
+    #process { border-top: 1px solid var(--border); }
+    .process-steps { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 2px; max-width: 1100px; }
+    .step { background: var(--panel); border: 1px solid var(--border); padding: 36px 32px; }
+    .step-num { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 2.5rem; color: rgba(61,255,160,0.2); line-height: 1; margin-bottom: 16px; }
+    .step-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; color: #fff; margin-bottom: 10px; }
+    .step-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.7; }
+
+    /* CONTACT CTA */
+    #contact-cta { border-top: 1px solid var(--border); }
+    .cta-box {
+      max-width: 720px;
+      background: linear-gradient(135deg, rgba(61,255,160,0.07) 0%, transparent 60%);
+      border: 1px solid rgba(61,255,160,0.25);
+      padding: 60px 56px;
+    }
+    .cta-box h2 { margin-bottom: 16px; }
+    .cta-box p { color: var(--muted); font-size: 0.88rem; margin-bottom: 40px; max-width: 480px; line-height: 1.8; }
+    .email-block {
+      display: flex; align-items: center; gap: 0;
+      border: 1px solid var(--border); max-width: 480px; overflow: hidden;
+    }
+    .email-block span { flex: 1; padding: 16px 20px; font-size: 0.85rem; color: var(--text); background: var(--panel); }
+    .email-block a {
+      background: var(--green); color: var(--dark); font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 16px 24px; text-decoration: none; white-space: nowrap; transition: background 0.2s;
+    }
+    .email-block a:hover { background: var(--green2); }
+    .note { margin-top: 24px; font-size: 0.73rem; color: var(--muted); }
+    .note strong { color: var(--green); font-weight: 500; }
+
+    /* FOOTER */
+    footer { position: relative; z-index: 1; border-top: 1px solid var(--border); padding: 32px 48px; display: flex; align-items: center; justify-content: space-between; font-size: 0.72rem; color: var(--muted); letter-spacing: 0.06em; }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--green); }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 768px) {
+      nav { padding: 18px 24px; } .nav-links { display: none; }
+      .page-hero, section { padding-left: 24px; padding-right: 24px; }
+      .tiers-grid, .process-steps { grid-template-columns: 1fr; }
+      .cta-box { padding: 36px 28px; }
+      .email-block { flex-direction: column; }
+      .email-block a { text-align: center; }
+      footer { flex-direction: column; gap: 12px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a class="nav-logo" href="index.html">MALACHITEVR</a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#projects">Projects</a></li>
+      <li><a href="enterprise.html">Enterprise</a></li>
+      <li><a href="index.html#games">Games</a></li>
+      <li><a href="pcbuilds.html" class="active">PC Builds</a></li>
+    </ul>
+  </nav>
+
+  <div class="wip-bar">
+    <span style="color:var(--green);">&#9888;</span>
+    This website is a work in progress. Some info may not be correct.
+  </div>
+
+  <!-- HERO -->
+  <div class="page-hero">
+    <div class="hero-glow"></div>
+    <div class="hero-tag">Custom PC Builds &middot; malachitevr.win</div>
+    <h1>Your dream PC,<br/><span>built right.</span></h1>
+    <p class="hero-sub">
+      I build custom computers tailored to exactly what you need &mdash; your budget, your use case, your parts. No bloatware, no corners cut.
+    </p>
+  </div>
+
+  <!-- TIERS -->
+  <section id="tiers">
+    <div class="section-label">Build Tiers</div>
+    <h2 class="reveal">What I can build.</h2>
+    <p style="color:var(--muted);font-size:0.85rem;margin-bottom:48px;max-width:560px;" class="reveal">
+      These are example price ranges &mdash; every build is fully custom. Contact me and we'll figure out exactly what fits your needs and budget.
+    </p>
+    <div class="tiers-grid">
+
+      <div class="tier-card reveal">
+        <div class="tier-name">Starter</div>
+        <div class="tier-tagline">Budget gaming &amp; everyday use</div>
+        <ul class="tier-specs">
+          <li>Solid 1080p gaming performance</li>
+          <li>Office, browsing, light creative work</li>
+          <li>Reliable, well-cooled components</li>
+          <li>Great value for the price</li>
+        </ul>
+      </div>
+
+      <div class="tier-card featured reveal">
+        <div class="featured-badge">Most Popular</div>
+        <div class="tier-name">Performance</div>
+        <div class="tier-tagline">1440p gaming &amp; content creation</div>
+        <ul class="tier-specs">
+          <li>High-refresh 1440p gaming</li>
+          <li>Video editing, streaming, 3D work</li>
+          <li>VR-ready out of the box</li>
+          <li>Strong CPU &amp; GPU balance</li>
+        </ul>
+      </div>
+
+      <div class="tier-card reveal">
+        <div class="tier-name">Enthusiast</div>
+        <div class="tier-tagline">4K, VR, and workstation power</div>
+        <ul class="tier-specs">
+          <li>4K gaming at high framerates</li>
+          <li>Heavy rendering &amp; simulation</li>
+          <li>Top-tier cooling &amp; power delivery</li>
+          <li>Built to last for years</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section id="process">
+    <div class="section-label">The Process</div>
+    <h2 class="reveal">How it works.</h2>
+    <br/>
+    <div class="process-steps">
+      <div class="step reveal">
+        <div class="step-num">01</div>
+        <div class="step-title">Get in touch</div>
+        <div class="step-desc">Email me with what you want to use the PC for and a rough budget. No jargon needed &mdash; just tell me what you do.</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">02</div>
+        <div class="step-title">Parts selection</div>
+        <div class="step-desc">I'll put together a parts list tailored to your needs, with options and alternatives. You approve everything before anything is bought.</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">03</div>
+        <div class="step-title">Build &amp; test</div>
+        <div class="step-desc">I assemble the machine, run stress tests, check temperatures, and make sure everything is stable before it reaches you.</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">04</div>
+        <div class="step-title">Delivery &amp; support</div>
+        <div class="step-desc">You get your PC along with any setup help you need. If something doesn't work right, I'm on it.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT CTA -->
+  <section id="contact-cta">
+    <div class="section-label">Get in Touch</div>
+    <div class="cta-box reveal">
+      <h2>Ready to build<br/>your setup?</h2>
+      <p>
+        Drop me an email with your use case and budget and I'll get back to you with a parts list and quote. No commitment required.
+      </p>
+      <div class="email-block">
+        <span>malachite@malachitevr.win</span>
+        <a href="mailto:malachite@malachitevr.win">Send Email &#8599;</a>
+      </div>
+      <p class="note">
+        <strong>What to include:</strong> What you'll use it for (gaming, streaming, VR, work), your approximate budget, and any preferences (brand, size, aesthetics).
+      </p>
+    </div>
+  </section>
+
+  <footer>
+    <span>&copy; 2025 MalachiteVR</span>
+    <a href="index.html">&#8592; Back to portfolio</a>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver(
+      entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+      { threshold: 0.1 }
+    );
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>

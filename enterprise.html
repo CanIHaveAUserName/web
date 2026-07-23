@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Enterprise &mdash; MalachiteVR</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --green:  #3dffa0;
+      --green2: #1aff7a;
+      --dark:   #060a08;
+      --panel:  #0f1a14;
+      --border: #1e3328;
+      --muted:  #4a7a60;
+      --text:   #c8e8d8;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--dark); color: var(--text);
+      font-family: 'IBM Plex Mono', monospace; font-size: 15px;
+      line-height: 1.7; overflow-x: hidden;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 1000; opacity: 0.4;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    }
+    body::after {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.35;
+      background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 48px;
+      background: linear-gradient(to bottom, rgba(6,10,8,0.95), transparent);
+      backdrop-filter: blur(2px);
+    }
+    .nav-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--green); letter-spacing: 0.08em; text-decoration: none; }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; transition: color 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--green); }
+
+    /* WIP */
+    .wip-bar {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+      background: rgba(6,10,8,0.92); border-top: 1px solid var(--border);
+      backdrop-filter: blur(8px); padding: 12px 24px;
+      display: flex; align-items: center; justify-content: center;
+      gap: 10px; font-size: 0.75rem; letter-spacing: 0.06em; color: var(--muted);
+    }
+
+    /* HERO */
+    .page-hero {
+      position: relative; z-index: 1; min-height: 65vh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 140px 48px 80px; overflow: hidden;
+    }
+    .hero-glow { position: absolute; top: 10%; left: -10%; width: 700px; height: 700px; background: radial-gradient(circle, rgba(61,255,160,0.06) 0%, transparent 70%); pointer-events: none; }
+    .hero-glow-2 { position: absolute; bottom: -10%; right: 5%; width: 500px; height: 500px; background: radial-gradient(circle, rgba(61,255,160,0.04) 0%, transparent 70%); pointer-events: none; }
+    .hero-tag { display: inline-block; font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--green); border: 1px solid var(--border); padding: 6px 14px; margin-bottom: 40px; opacity: 0; animation: fadeUp 0.6s 0.1s forwards; }
+    h1 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(3rem, 8vw, 7rem); line-height: 0.95; letter-spacing: -0.02em; color: #fff; max-width: 800px; opacity: 0; animation: fadeUp 0.7s 0.25s forwards; }
+    h1 span { color: var(--green); }
+    .hero-sub { margin-top: 32px; max-width: 560px; color: var(--muted); font-size: 0.9rem; line-height: 1.8; opacity: 0; animation: fadeUp 0.7s 0.45s forwards; }
+    .hero-badges { margin-top: 40px; display: flex; gap: 12px; flex-wrap: wrap; opacity: 0; animation: fadeUp 0.7s 0.6s forwards; }
+    .badge { font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; padding: 6px 14px; border: 1px solid var(--border); color: var(--muted); }
+
+    /* SECTIONS */
+    section { position: relative; z-index: 1; padding: 80px 48px; }
+    .section-label { font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--green); margin-bottom: 48px; display: flex; align-items: center; gap: 16px; }
+    .section-label::after { content: ''; display: block; height: 1px; width: 60px; background: var(--border); }
+    h2 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: clamp(1.8rem, 3.5vw, 2.8rem); color: #fff; line-height: 1.1; margin-bottom: 20px; }
+    h3 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.2rem; color: #fff; margin-bottom: 10px; }
+
+    /* OFFERINGS GRID */
+    #offerings { border-top: 1px solid var(--border); }
+    .offerings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 2px; max-width: 1200px; }
+    .offering-card {
+      background: var(--panel); border: 1px solid var(--border);
+      padding: 40px; position: relative; overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .offering-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--green); transform: scaleX(0); transform-origin: left; transition: transform 0.4s; }
+    .offering-card:hover { border-color: var(--green); transform: translateY(-4px); }
+    .offering-card:hover::before { transform: scaleX(1); }
+    .offering-icon { font-size: 2rem; margin-bottom: 20px; display: block; }
+    .offering-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.25rem; color: #fff; margin-bottom: 12px; }
+    .offering-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.75; margin-bottom: 24px; }
+    .offering-specs { list-style: none; }
+    .offering-specs li { font-size: 0.75rem; color: var(--text); padding: 6px 0; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; gap: 10px; }
+    .offering-specs li:last-child { border-bottom: none; }
+    .offering-specs li::before { content: '\25B8'; color: var(--green); flex-shrink: 0; margin-top: 2px; }
+
+    /* SPECS TABLE */
+    #specs { border-top: 1px solid var(--border); }
+    .specs-table { width: 100%; max-width: 900px; border-collapse: collapse; }
+    .specs-table thead th { font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--green); padding: 14px 20px; text-align: left; border-bottom: 1px solid var(--border); }
+    .specs-table tbody tr { border-bottom: 1px solid var(--border); transition: background 0.2s; }
+    .specs-table tbody tr:hover { background: rgba(61,255,160,0.03); }
+    .specs-table td { padding: 16px 20px; font-size: 0.8rem; color: var(--text); vertical-align: top; }
+    .specs-table td:first-child { color: var(--muted); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; width: 160px; }
+    .specs-table td .note { font-size: 0.7rem; color: var(--muted); margin-top: 4px; }
+
+    /* USE CASES */
+    #usecases { border-top: 1px solid var(--border); }
+    .usecases-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 2px; max-width: 1100px; }
+    .usecase-card {
+      background: var(--panel); border: 1px solid var(--border); padding: 32px;
+      transition: border-color 0.3s;
+    }
+    .usecase-card:hover { border-color: rgba(61,255,160,0.3); }
+    .usecase-num { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.8rem; color: rgba(61,255,160,0.18); line-height: 1; margin-bottom: 14px; }
+    .usecase-title { font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
+    .usecase-desc { font-size: 0.76rem; color: var(--muted); line-height: 1.7; }
+
+    /* CONTACT */
+    #contact-cta { border-top: 1px solid var(--border); }
+    .cta-box {
+      max-width: 760px;
+      background: linear-gradient(135deg, rgba(61,255,160,0.07) 0%, transparent 60%);
+      border: 1px solid rgba(61,255,160,0.25);
+      padding: 60px 56px;
+    }
+    .cta-box p { color: var(--muted); font-size: 0.88rem; margin-bottom: 40px; max-width: 520px; line-height: 1.8; }
+    .email-block { display: flex; align-items: center; border: 1px solid var(--border); max-width: 520px; overflow: hidden; }
+    .email-block span { flex: 1; padding: 16px 20px; font-size: 0.85rem; color: var(--text); background: var(--panel); }
+    .email-block a { background: var(--green); color: var(--dark); font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 16px 24px; text-decoration: none; white-space: nowrap; transition: background 0.2s; }
+    .email-block a:hover { background: var(--green2); }
+    .note { margin-top: 24px; font-size: 0.73rem; color: var(--muted); line-height: 1.7; }
+    .note strong { color: var(--green); font-weight: 500; }
+
+    /* FOOTER */
+    footer { position: relative; z-index: 1; border-top: 1px solid var(--border); padding: 32px 48px; display: flex; align-items: center; justify-content: space-between; font-size: 0.72rem; color: var(--muted); letter-spacing: 0.06em; }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--green); }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 768px) {
+      nav { padding: 18px 24px; } .nav-links { display: none; }
+      .page-hero, section { padding-left: 24px; padding-right: 24px; }
+      .offerings-grid, .usecases-grid { grid-template-columns: 1fr; }
+      .specs-table td:first-child { width: 100px; }
+      .cta-box { padding: 36px 28px; }
+      .email-block { flex-direction: column; }
+      .email-block a { text-align: center; }
+      footer { flex-direction: column; gap: 12px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a class="nav-logo" href="index.html">MALACHITEVR</a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#projects">Projects</a></li>
+      <li><a href="pcbuilds.html">PC Builds</a></li>
+      <li><a href="enterprise.html" class="active">Enterprise</a></li>
+    </ul>
+  </nav>
+
+  <div class="wip-bar">
+    <span style="color:var(--green);">&#9888;</span>
+    This website is a work in progress. Some info may not be correct.
+  </div>
+
+  <!-- HERO -->
+  <div class="page-hero">
+    <div class="hero-glow"></div>
+    <div class="hero-glow-2"></div>
+    <div class="hero-tag">Enterprise &middot; malachitevr.win</div>
+    <h1>Servers &amp; enterprise<br/><span>hardware.</span></h1>
+    <p class="hero-sub">
+      Custom-built enterprise-grade computers, servers, and rack infrastructure for businesses, labs, and teams that need serious hardware done right.
+    </p>
+    <div class="hero-badges">
+      <span class="badge">&#128312; Rack Servers</span>
+      <span class="badge">&#128312; Workstations</span>
+      <span class="badge">&#128312; NAS &amp; Storage</span>
+      <span class="badge">&#128312; Networking</span>
+      <span class="badge">&#128312; Custom Builds</span>
+    </div>
+  </div>
+
+  <!-- OFFERINGS -->
+  <section id="offerings">
+    <div class="section-label">What I Build</div>
+    <h2 class="reveal">Enterprise offerings.</h2>
+    <p style="color:var(--muted);font-size:0.85rem;margin-bottom:48px;max-width:580px;" class="reveal">
+      Every system is specced, sourced, assembled, and tested specifically for your environment. No off-the-shelf compromises.
+    </p>
+    <div class="offerings-grid">
+
+      <div class="offering-card reveal">
+        <span class="offering-icon">&#128444;</span>
+        <div class="offering-title">Rack Servers</div>
+        <div class="offering-desc">1U, 2U, and 4U rack-mounted servers built for data centres, server rooms, and on-premise infrastructure.</div>
+        <ul class="offering-specs">
+          <li>Dual-socket CPU configurations available</li>
+          <li>ECC RAM for memory error correction</li>
+          <li>Hot-swap drive bays &amp; redundant PSUs</li>
+          <li>IPMI / iDRAC remote management</li>
+          <li>Custom OS &amp; RAID configuration</li>
+        </ul>
+      </div>
+
+      <div class="offering-card reveal">
+        <span class="offering-icon">&#128187;</span>
+        <div class="offering-title">Enterprise Workstations</div>
+        <div class="offering-desc">High-performance desktop workstations for engineering, rendering, ML training, and professional creative work.</div>
+        <ul class="offering-specs">
+          <li>HEDT or server-class CPUs (Threadripper, Xeon)</li>
+          <li>Professional GPU options (NVIDIA RTX / A-series)</li>
+          <li>Large ECC RAM capacity</li>
+          <li>Fast NVMe RAID storage</li>
+          <li>Quiet, thermally optimised chassis</li>
+        </ul>
+      </div>
+
+      <div class="offering-card reveal">
+        <span class="offering-icon">&#128190;</span>
+        <div class="offering-title">NAS &amp; Storage Servers</div>
+        <div class="offering-desc">Network-attached storage solutions for backups, media libraries, shared team storage, and archival systems.</div>
+        <ul class="offering-specs">
+          <li>TrueNAS / Unraid / custom OS setup</li>
+          <li>High drive-count chassis (8+ bays)</li>
+          <li>ZFS RAID for data integrity</li>
+          <li>10GbE networking support</li>
+          <li>Remote access &amp; user management config</li>
+        </ul>
+      </div>
+
+      <div class="offering-card reveal">
+        <span class="offering-icon">&#127760;</span>
+        <div class="offering-title">Networking Infrastructure</div>
+        <div class="offering-desc">Managed switches, pfSense / OPNsense routers, VLANs, and structured cabling for office and lab environments.</div>
+        <ul class="offering-specs">
+          <li>pfSense / OPNsense firewall setup</li>
+          <li>VLAN segmentation &amp; QoS</li>
+          <li>Managed switch configuration</li>
+          <li>VPN (WireGuard / OpenVPN)</li>
+          <li>Wi-Fi 6 access point deployment</li>
+        </ul>
+      </div>
+
+      <div class="offering-card reveal">
+        <span class="offering-icon">&#129302;</span>
+        <div class="offering-title">AI &amp; ML Systems</div>
+        <div class="offering-desc">GPU compute nodes and inference servers for machine learning workloads, model training, and local AI deployment.</div>
+        <ul class="offering-specs">
+          <li>Multi-GPU configurations</li>
+          <li>NVLink &amp; high-bandwidth interconnects</li>
+          <li>CUDA / ROCm environment setup</li>
+          <li>High-speed NVMe scratch storage</li>
+          <li>Liquid cooling for sustained GPU loads</li>
+        </ul>
+      </div>
+
+      <div class="offering-card reveal">
+        <span class="offering-icon">&#128274;</span>
+        <div class="offering-title">Virtualisation Hosts</div>
+        <div class="offering-desc">Proxmox, VMware, or Hyper-V hosts for running virtual machines, containers, and hybrid cloud workloads.</div>
+        <ul class="offering-specs">
+          <li>Proxmox VE / VMware ESXi setup</li>
+          <li>High core-count server CPUs</li>
+          <li>Large RAM pools (512GB+)</li>
+          <li>SAN / NAS shared storage integration</li>
+          <li>Clustering &amp; HA configuration</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- COMPONENT TABLE -->
+  <section id="specs">
+    <div class="section-label">Component Standards</div>
+    <h2 class="reveal">What goes inside.</h2>
+    <p style="color:var(--muted);font-size:0.85rem;margin-bottom:40px;max-width:540px;" class="reveal">
+      Enterprise builds use server-grade components throughout. Every part is sourced from reputable vendors with proper warranties.
+    </p>
+    <table class="specs-table reveal">
+      <thead>
+        <tr>
+          <th>Component</th>
+          <th>Enterprise Standard</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>CPU</td>
+          <td>AMD EPYC / Intel Xeon Scalable or HEDT (Threadripper PRO) depending on workload<div class="note">Dual-socket options available for rack servers</div></td>
+        </tr>
+        <tr>
+          <td>Memory</td>
+          <td>ECC Registered DDR4 / DDR5 &mdash; minimum 64GB, scaling to 1TB+ per node<div class="note">ECC mandatory for all server and workstation builds</div></td>
+        </tr>
+        <tr>
+          <td>Storage</td>
+          <td>Enterprise NVMe SSDs (Samsung PM9A3, Micron 7450) + SAS / SATA HDDs for bulk<div class="note">RAID configured via hardware HBA or ZFS software RAID</div></td>
+        </tr>
+        <tr>
+          <td>Networking</td>
+          <td>Dual-port 10GbE or 25GbE NICs as standard; InfiniBand available for HPC<div class="note">IPMI / BMC dedicated management port on all servers</div></td>
+        </tr>
+        <tr>
+          <td>Power</td>
+          <td>Redundant 80 PLUS Platinum or Titanium PSUs with hot-swap capability<div class="note">Proper load balancing between PSU pairs</div></td>
+        </tr>
+        <tr>
+          <td>Chassis</td>
+          <td>Supermicro, Rosewill Server, or Fractal Design Node series depending on form factor<div class="note">Rail kits included for all rack-mount builds</div></td>
+        </tr>
+        <tr>
+          <td>OS &amp; Software</td>
+          <td>Ubuntu Server, Debian, Rocky Linux, Proxmox, TrueNAS, or Windows Server<div class="note">Fully configured, tested, and documented before delivery</div></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- USE CASES -->
+  <section id="usecases">
+    <div class="section-label">Who It's For</div>
+    <h2 class="reveal">Built for serious work.</h2>
+    <br/>
+    <div class="usecases-grid">
+      <div class="usecase-card reveal">
+        <div class="usecase-num">01</div>
+        <div class="usecase-title">Small &amp; Medium Businesses</div>
+        <div class="usecase-desc">On-premise file servers, backup solutions, and business workstations without the enterprise price tag.</div>
+      </div>
+      <div class="usecase-card reveal">
+        <div class="usecase-num">02</div>
+        <div class="usecase-title">Research &amp; Labs</div>
+        <div class="usecase-desc">High-core-count compute nodes, GPU clusters, and data storage for scientific and academic workloads.</div>
+      </div>
+      <div class="usecase-card reveal">
+        <div class="usecase-num">03</div>
+        <div class="usecase-title">Game Studios &amp; VFX</div>
+        <div class="usecase-desc">Render farm nodes, shared NAS storage, and powerful artist workstations for production pipelines.</div>
+      </div>
+      <div class="usecase-card reveal">
+        <div class="usecase-num">04</div>
+        <div class="usecase-title">Homelab &amp; Self-Hosting</div>
+        <div class="usecase-desc">Virtualisation hosts, NAS builds, and networking gear for serious homelabbers who want proper hardware.</div>
+      </div>
+      <div class="usecase-card reveal">
+        <div class="usecase-num">05</div>
+        <div class="usecase-title">AI &amp; ML Teams</div>
+        <div class="usecase-desc">On-premise GPU compute for training and inference, avoiding cloud costs for recurring workloads.</div>
+      </div>
+      <div class="usecase-card reveal">
+        <div class="usecase-num">06</div>
+        <div class="usecase-title">Colocation</div>
+        <div class="usecase-desc">Rack-ready servers built to spec for deployment in third-party data centres, with IPMI for remote management.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT CTA -->
+  <section id="contact-cta">
+    <div class="section-label">Get in Touch</div>
+    <div class="cta-box reveal">
+      <h2>Let's spec out<br/>your system.</h2>
+      <p>
+        Tell me what you're trying to run, how many users or workloads you need to support, and any constraints (rack space, power, budget). I'll come back with a full spec and quote.
+      </p>
+      <div class="email-block">
+        <span>malachite@malachitevr.win</span>
+        <a href="mailto:malachite@malachitevr.win">Send Email &#8599;</a>
+      </div>
+      <p class="note">
+        <strong>Helpful to include:</strong> What the system will run (virtualisation, storage, ML, etc.), expected number of users or workloads, rack space or physical constraints, power budget, and timeline.
+      </p>
+    </div>
+  </section>
+
+  <footer>
+    <span>&copy; 2025 MalachiteVR</span>
+    <div style="display:flex;gap:24px;">
+      <a href="pcbuilds.html">&#8592; PC Builds</a>
+      <a href="index.html">Portfolio</a>
+    </div>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver(
+      entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+      { threshold: 0.08 }
+    );
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
