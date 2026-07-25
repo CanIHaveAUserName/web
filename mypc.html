@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My PC &mdash; MalachiteVR</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --green:  #3dffa0;
+      --green2: #1aff7a;
+      --dark:   #060a08;
+      --panel:  #0f1a14;
+      --border: #1e3328;
+      --muted:  #4a7a60;
+      --text:   #c8e8d8;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--dark); color: var(--text);
+      font-family: 'IBM Plex Mono', monospace; font-size: 15px;
+      line-height: 1.7; overflow-x: hidden;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 1000; opacity: 0.4;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    }
+    body::after {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.35;
+      background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 48px;
+      background: linear-gradient(to bottom, rgba(6,10,8,0.95), transparent);
+      backdrop-filter: blur(2px);
+    }
+    .nav-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--green); letter-spacing: 0.08em; text-decoration: none; }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; transition: color 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--green); }
+    .wip-bar {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+      background: rgba(6,10,8,0.92); border-top: 1px solid var(--border);
+      backdrop-filter: blur(8px); padding: 12px 24px;
+      display: flex; align-items: center; justify-content: center;
+      gap: 10px; font-size: 0.75rem; letter-spacing: 0.06em; color: var(--muted);
+    }
+    .page-hero {
+      position: relative; z-index: 1; min-height: 55vh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 140px 48px 60px; overflow: hidden;
+    }
+    .hero-glow { position: absolute; top: 0%; left: -10%; width: 700px; height: 700px; background: radial-gradient(circle, rgba(61,255,160,0.06) 0%, transparent 70%); pointer-events: none; }
+    .hero-tag { display: inline-block; font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--green); border: 1px solid var(--border); padding: 6px 14px; margin-bottom: 40px; opacity: 0; animation: fadeUp 0.6s 0.1s forwards; }
+    h1 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(3rem, 8vw, 7rem); line-height: 0.95; letter-spacing: -0.02em; color: #fff; max-width: 800px; opacity: 0; animation: fadeUp 0.7s 0.25s forwards; }
+    h1 span { color: var(--green); }
+    .hero-sub { margin-top: 32px; max-width: 520px; color: var(--muted); font-size: 0.88rem; line-height: 1.8; opacity: 0; animation: fadeUp 0.7s 0.45s forwards; }
+    .os-badge { display: inline-flex; align-items: center; gap: 10px; margin-top: 32px; padding: 10px 18px; border: 1px solid var(--border); background: var(--panel); font-size: 0.72rem; color: var(--muted); letter-spacing: 0.06em; opacity: 0; animation: fadeUp 0.7s 0.6s forwards; }
+    .os-badge strong { color: var(--green); font-weight: 500; }
+
+    /* SECTIONS */
+    section { position: relative; z-index: 1; padding: 80px 48px; }
+    .section-label { font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--green); margin-bottom: 48px; display: flex; align-items: center; gap: 16px; }
+    .section-label::after { content: ''; display: block; height: 1px; width: 60px; background: var(--border); }
+    h2 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: clamp(1.8rem, 3.5vw, 2.6rem); color: #fff; line-height: 1.1; margin-bottom: 40px; }
+
+    /* SPEC CARDS GRID */
+    #specs { border-top: 1px solid var(--border); }
+    .specs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 2px; max-width: 1200px; }
+    .spec-card {
+      background: var(--panel); border: 1px solid var(--border);
+      padding: 36px 40px; position: relative; overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .spec-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--green); transform: scaleX(0); transform-origin: left; transition: transform 0.4s; }
+    .spec-card:hover { border-color: rgba(61,255,160,0.3); transform: translateY(-3px); }
+    .spec-card:hover::before { transform: scaleX(1); }
+    .spec-icon { font-size: 1.8rem; margin-bottom: 20px; display: block; }
+    .spec-category { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+    .spec-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.15rem; color: #fff; margin-bottom: 16px; line-height: 1.3; }
+    .spec-details { list-style: none; }
+    .spec-details li { font-size: 0.75rem; color: var(--text); padding: 7px 0; border-bottom: 1px solid rgba(30,51,40,0.6); display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+    .spec-details li:last-child { border-bottom: none; }
+    .spec-details li .label { color: var(--muted); flex-shrink: 0; }
+    .spec-details li .val { color: var(--text); text-align: right; }
+    .spec-details li .val.highlight { color: var(--green); }
+
+    /* FULL SPEC TABLE */
+    #full-specs { border-top: 1px solid var(--border); }
+    .spec-table-wrap { max-width: 900px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    thead th { font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--green); padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+    tbody tr { border-bottom: 1px solid rgba(30,51,40,0.5); transition: background 0.2s; }
+    tbody tr:hover { background: rgba(61,255,160,0.03); }
+    tbody td { padding: 13px 16px; font-size: 0.78rem; vertical-align: top; }
+    tbody td:first-child { color: var(--muted); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; width: 180px; white-space: nowrap; }
+    tbody td:last-child { color: var(--text); }
+    .sub { font-size: 0.68rem; color: var(--muted); margin-top: 3px; }
+
+    footer { position: relative; z-index: 1; border-top: 1px solid var(--border); padding: 32px 48px; display: flex; align-items: center; justify-content: space-between; font-size: 0.72rem; color: var(--muted); letter-spacing: 0.06em; }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--green); }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 768px) {
+      nav { padding: 18px 24px; } .nav-links { display: none; }
+      .page-hero, section { padding-left: 24px; padding-right: 24px; }
+      .specs-grid { grid-template-columns: 1fr; }
+      footer { flex-direction: column; gap: 12px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a class="nav-logo" href="index.html">MALACHITEVR</a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#projects">Projects</a></li>
+      <li><a href="pcbuilds.html">PC Builds</a></li>
+      <li><a href="enterprise.html">Enterprise</a></li>
+      <li><a href="mypc.html" class="active">My PC</a></li>
+    </ul>
+  </nav>
+
+  <div class="wip-bar">
+    <span style="color:var(--green);">&#9888;</span>
+    This website is a work in progress. Some info may not be correct.
+  </div>
+
+  <div class="page-hero">
+    <div class="hero-glow"></div>
+    <div class="hero-tag">Hardware &middot; DESKTOP-UITMNRT</div>
+    <h1>My <span>rig.</span></h1>
+    <p class="hero-sub">The machine I build, game, and develop on. Full hardware specs pulled directly from the system.</p>
+    <div class="os-badge">
+      &#128187;&nbsp; <strong>Windows 11 Pro</strong> &nbsp;&mdash;&nbsp; x64 &nbsp;&middot;&nbsp; Build 26200.8737 (25H2)
+    </div>
+  </div>
+
+  <!-- SPEC CARDS -->
+  <section id="specs">
+    <div class="section-label">Hardware</div>
+    <h2 class="reveal">What's inside.</h2>
+    <div class="specs-grid">
+
+      <!-- CPU -->
+      <div class="spec-card reveal">
+        <span class="spec-icon">&#129504;</span>
+        <div class="spec-category">Processor</div>
+        <div class="spec-name">AMD Ryzen 5 5600GT</div>
+        <ul class="spec-details">
+          <li><span class="label">Cores / Threads</span><span class="val highlight">6C / 12T</span></li>
+          <li><span class="label">Base Clock</span><span class="val">4.7 GHz</span></li>
+          <li><span class="label">Boost (PBO)</span><span class="val">up to 4.85 GHz</span></li>
+          <li><span class="label">Architecture</span><span class="val">Cezanne (Zen 3) &middot; 7nm</span></li>
+          <li><span class="label">Socket</span><span class="val">AM4</span></li>
+          <li><span class="label">TDP</span><span class="val">65 W</span></li>
+          <li><span class="label">L3 Cache</span><span class="val">16 MB</span></li>
+          <li><span class="label">iGPU</span><span class="val">Radeon Graphics (integrated)</span></li>
+        </ul>
+      </div>
+
+      <!-- MOTHERBOARD -->
+      <div class="spec-card reveal">
+        <span class="spec-icon">&#128268;</span>
+        <div class="spec-category">Motherboard</div>
+        <div class="spec-name">Gigabyte B550M DS3H AC</div>
+        <ul class="spec-details">
+          <li><span class="label">Chipset</span><span class="val">AMD B550</span></li>
+          <li><span class="label">Form Factor</span><span class="val">Micro-ATX</span></li>
+          <li><span class="label">PCIe</span><span class="val">x16 (GPU) &middot; x4 &middot; 2&times; x1</span></li>
+          <li><span class="label">USB</span><span class="val">USB 3.2 &middot; USB-C</span></li>
+          <li><span class="label">Audio</span><span class="val">Realtek ALC1220</span></li>
+          <li><span class="label">BIOS</span><span class="val">AMI UEFI &middot; v FE (Oct 2025)</span></li>
+          <li><span class="label">TPM</span><span class="val">Hardware TPM 2.0 (AMD)</span></li>
+          <li><span class="label">Wi-Fi</span><span class="val">AC (built-in)</span></li>
+        </ul>
+      </div>
+
+      <!-- GPU -->
+      <div class="spec-card reveal">
+        <span class="spec-icon">&#128250;</span>
+        <div class="spec-category">Graphics Card</div>
+        <div class="spec-name">Gigabyte RTX 3060 GAMING OC 12G</div>
+        <ul class="spec-details">
+          <li><span class="label">VRAM</span><span class="val highlight">12 GB GDDR6</span></li>
+          <li><span class="label">Chip</span><span class="val">GA106-302 (LHR) &middot; Samsung</span></li>
+          <li><span class="label">Shader Cores</span><span class="val">3584</span></li>
+          <li><span class="label">RT Cores</span><span class="val">28</span></li>
+          <li><span class="label">Tensor Cores</span><span class="val">112</span></li>
+          <li><span class="label">Memory Bus</span><span class="val">192-bit</span></li>
+          <li><span class="label">GPU Clock</span><span class="val">1837 MHz (OC)</span></li>
+          <li><span class="label">ReBAR</span><span class="val">Enabled (16 GB)</span></li>
+        </ul>
+      </div>
+
+      <!-- RAM -->
+      <div class="spec-card reveal">
+        <span class="spec-icon">&#128190;</span>
+        <div class="spec-category">Memory</div>
+        <div class="spec-name">64 GB DDR4-3200 (4&times; 16 GB)</div>
+        <ul class="spec-details">
+          <li><span class="label">Total</span><span class="val highlight">64 GB</span></li>
+          <li><span class="label">Config</span><span class="val">4&times; 16 GB &middot; Dual Channel</span></li>
+          <li><span class="label">Speed</span><span class="val">DDR4-3200 / PC4-25600</span></li>
+          <li><span class="label">Timings</span><span class="val">CL16-18-18-38</span></li>
+          <li><span class="label">Manufacturer</span><span class="val">Silicon Power</span></li>
+          <li><span class="label">DRAM</span><span class="val">Samsung dies</span></li>
+          <li><span class="label">Voltage</span><span class="val">1.35 V (XMP 2.0)</span></li>
+          <li><span class="label">Command Rate</span><span class="val">1T</span></li>
+        </ul>
+      </div>
+
+      <!-- MONITORS -->
+      <div class="spec-card reveal">
+        <span class="spec-icon">&#128253;</span>
+        <div class="spec-category">Displays</div>
+        <div class="spec-name">2&times; ViewSonic VA2447 &mdash; Dual 1080p</div>
+        <ul class="spec-details">
+          <li><span class="label">Resolution</span><span class="val highlight">1920 &times; 1080 (FHD)</span></li>
+          <li><span class="label">Refresh Rate</span><span class="val">100 Hz</span></li>
+          <li><span class="label">Panel Size</span><span class="val">24" (approx.)</span></li>
+          <li><span class="label">Adaptive Sync</span><span class="val">AMD FreeSync</span></li>
+          <li><span class="label">Input</span><span class="val">Digital (HDMI / DP)</span></li>
+          <li><span class="label">sRGB Coverage</span><span class="val">~100%</span></li>
+          <li><span class="label">HDR</span><span class="val">Not Supported</span></li>
+          <li><span class="label">Setup</span><span class="val">Dual monitor</span></li>
+        </ul>
+      </div>
+
+      <!-- SYSTEM INFO -->
+      <div class="spec-card reveal">
+        <span class="spec-icon">&#9881;</span>
+        <div class="spec-category">System</div>
+        <div class="spec-name">Windows 11 Pro &mdash; Build 26200</div>
+        <ul class="spec-details">
+          <li><span class="label">OS</span><span class="val">Windows 11 Pro (x64)</span></li>
+          <li><span class="label">Build</span><span class="val">26200.8737 (25H2)</span></li>
+          <li><span class="label">Boot</span><span class="val">UEFI &middot; Secure Boot On</span></li>
+          <li><span class="label">GPU Driver</span><span class="val">GeForce 610.74 (Jul 2026)</span></li>
+          <li><span class="label">BIOS Date</span><span class="val">Oct 28, 2025</span></li>
+          <li><span class="label">Hostname</span><span class="val">DESKTOP-UITMNRT</span></li>
+          <li><span class="label">Case Type</span><span class="val">Desktop</span></li>
+          <li><span class="label">Audio</span><span class="val">Realtek ALC1220</span></li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FULL SPEC TABLE -->
+  <section id="full-specs">
+    <div class="section-label">Full Breakdown</div>
+    <h2 class="reveal">Detailed specs.</h2>
+    <div class="spec-table-wrap reveal">
+      <table>
+        <thead>
+          <tr>
+            <th>Component</th>
+            <th>Specification</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>CPU</td><td>AMD Ryzen 5 5600GT with Radeon Graphics<div class="sub">Cezanne (Zen 3) &middot; 7nm &middot; AM4 &middot; 6C/12T &middot; 4.7 GHz base &middot; 4.85 GHz PBO limit</div></td></tr>
+          <tr><td>CPU TDP</td><td>65 W (PPT 88 W &middot; PL1/PL2 unlocked to 120 W)</td></tr>
+          <tr><td>CPU Cache</td><td>L1: 384 KB &middot; L2: 3 MB &middot; L3: 16 MB</td></tr>
+          <tr><td>Motherboard</td><td>Gigabyte B550M DS3H AC<div class="sub">AMD B550 (Promontory) &middot; Micro-ATX &middot; AM4 socket</div></td></tr>
+          <tr><td>BIOS</td><td>AMI UEFI v FE &mdash; Released October 28, 2025</td></tr>
+          <tr><td>GPU</td><td>Gigabyte GeForce RTX 3060 GAMING OC 12G 2.0<div class="sub">GA106-302 LHR &middot; 3584 CUDA cores &middot; 28 RT cores &middot; 112 Tensor cores</div></td></tr>
+          <tr><td>VRAM</td><td>12 GB GDDR6 (Hynix) &middot; 192-bit bus &middot; 17,254 MHz effective</td></tr>
+          <tr><td>GPU TDP</td><td>170 W rated &middot; 212 W maximum &middot; ReBAR enabled (16 GB)</td></tr>
+          <tr><td>RAM Total</td><td>64 GB DDR4 &middot; Dual Channel &middot; 2 channels active</td></tr>
+          <tr><td>RAM Modules</td><td>4&times; 16 GB Silicon Power &mdash; Samsung DRAM dies<div class="sub">DDR4-3200 (PC4-25600) &middot; UDIMM &middot; XMP 2.0 &middot; 1.35 V</div></td></tr>
+          <tr><td>RAM Timings</td><td>CL16-18-18-38 @ 3200 MT/s &middot; Command Rate 1T</td></tr>
+          <tr><td>Display 1</td><td>ViewSonic VA2447 &mdash; 1920&times;1080 @ 100 Hz &middot; FreeSync &middot; ~100% sRGB</td></tr>
+          <tr><td>Display 2</td><td>ViewSonic VA2447 &mdash; 1920&times;1080 @ 100 Hz &middot; FreeSync &middot; ~100% sRGB</td></tr>
+          <tr><td>Audio</td><td>Realtek ALC1220 (onboard)</td></tr>
+          <tr><td>Networking</td><td>Gigabit Ethernet (RJ-45) &middot; Wi-Fi AC (built-in)</td></tr>
+          <tr><td>USB</td><td>USB 3.2 &times;5 &middot; USB-C &times;1 (rear I/O)</td></tr>
+          <tr><td>Video Out</td><td>HDMI &times;2 &middot; DisplayPort &times;1 (GPU)</td></tr>
+          <tr><td>PCIe Slots</td><td>x16 (GPU in use) &middot; x4 (empty) &middot; x1 M.2 (empty)</td></tr>
+          <tr><td>OS</td><td>Windows 11 Professional (x64) &middot; Build 26200.8737 (25H2)</td></tr>
+          <tr><td>Security</td><td>UEFI Secure Boot &middot; Hardware TPM 2.0 (AMD) &middot; CET Shadow Stack</td></tr>
+          <tr><td>GPU Driver</td><td>NVIDIA GeForce 610.74 &mdash; July 1, 2026</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <span>&copy; 2025 MalachiteVR</span>
+    <a href="index.html">&#8592; Back to portfolio</a>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver(
+      entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+      { threshold: 0.08 }
+    );
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
