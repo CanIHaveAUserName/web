@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#3dffa0" />
+  <meta name="description" content="Current projects and technical experiments by MalachiteVR." />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="MalachiteVR" />
+  <meta property="og:title" content="My Current Work — MalachiteVR" />
+  <meta property="og:description" content="Minecraft, Chromium, local AI, infrastructure, bots, and VR experiments currently on the workbench." />
+  <meta property="og:url" content="https://malachitevr.win/my-current-work.html" />
+  <title>My Current Work &mdash; MalachiteVR</title>
+  <style>
+    :root {
+      --bg: #001900;
+      --panel: #003d00;
+      --panel-dark: #002800;
+      --green: #00ff66;
+      --bright: #ffff66;
+      --text: #d8ffd8;
+      --muted: #aaffaa;
+      --border: #33ff33;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background: var(--bg);
+      font: 13px/1.45 Arial, Helvetica, sans-serif;
+      background-image: linear-gradient(#003b00 1px, transparent 1px), linear-gradient(90deg, #003b00 1px, transparent 1px);
+      background-size: 16px 16px;
+    }
+    body::before {
+      content: "";
+      display: block;
+      height: 12px;
+      background: #004d00;
+      border-bottom: 2px outset var(--green);
+    }
+    body::after {
+      content: "Best viewed with a modern browser • MalachiteVR • 2000s Web Edition";
+      display: block;
+      padding: 18px 0 28px;
+      color: #76d976;
+      text-align: center;
+      font: 11px "Courier New", monospace;
+    }
+    nav, main, footer, .wip-bar, marquee { width: 900px; max-width: 94%; margin-left: auto; margin-right: auto; }
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-top: 12px;
+      padding: 7px;
+      background: #006600;
+      border: 3px ridge #8aff8a;
+      box-shadow: 4px 4px #000;
+    }
+    .nav-logo {
+      color: #fff;
+      text-decoration: none;
+      white-space: nowrap;
+      font: 900 24px "Courier New", monospace;
+      letter-spacing: -2px;
+      text-shadow: 2px 2px #000;
+    }
+    .nav-links { display: flex; flex-wrap: wrap; gap: 3px; margin: 0; padding: 0; list-style: none; }
+    .nav-links a {
+      display: block;
+      min-width: 70px;
+      padding: 4px 9px;
+      color: #000;
+      text-align: center;
+      text-decoration: none;
+      text-transform: uppercase;
+      background: linear-gradient(#d7ffd7, #55cc55);
+      border: 2px outset #eaffea;
+      box-shadow: 1px 1px #000;
+      font: bold 11px Arial, sans-serif;
+    }
+    .nav-links a:hover, .nav-links a.active { background: var(--bright); border-style: inset; }
+    .wip-bar {
+      margin-top: 8px;
+      padding: 5px 8px;
+      color: #000;
+      text-align: center;
+      background: #ffffcc;
+      border: 2px solid #006600;
+      border-left-width: 5px;
+      font: 12px "Times New Roman", serif;
+    }
+    marquee {
+      display: block;
+      margin-top: 6px;
+      padding: 3px;
+      color: #ffff00;
+      background: #003300;
+      border: 2px inset #00aa00;
+      font: bold 12px "Courier New", monospace;
+    }
+    .hero, section {
+      margin-top: 12px;
+      padding: 18px;
+      background: var(--panel);
+      border: 3px ridge var(--border);
+      box-shadow: 5px 5px #000;
+    }
+    .hero { text-align: center; }
+    .eyebrow, .section-label {
+      display: inline-block;
+      margin-bottom: 8px;
+      padding: 3px 9px;
+      color: #000;
+      background: #00cc00;
+      border: 2px outset #baffba;
+      text-transform: uppercase;
+      font: bold 11px "Courier New", monospace;
+    }
+    h1, h2, h3 { color: #fff; font-family: "Times New Roman", serif; text-shadow: 2px 2px #000; }
+    h1 { margin: 8px 0; font-size: 42px; line-height: 1.05; }
+    h2 { margin: 8px 0 12px; padding-bottom: 4px; border-bottom: 2px solid #00cc00; font-size: 27px; }
+    h3 { margin: 4px 0; font-size: 19px; }
+    .hero p { max-width: 680px; margin: 8px auto; color: var(--text); }
+    .work-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .work-card {
+      position: relative;
+      padding: 12px;
+      background: var(--panel-dark);
+      border: 2px ridge #4dcc4d;
+      box-shadow: 2px 2px #000;
+    }
+    .work-card:hover { background: #005000; }
+    .work-card.featured { border-color: var(--bright); }
+    .number { color: #ffff00; font: bold 12px "Courier New", monospace; }
+    .status { float: right; padding: 2px 6px; color: #000; background: #66ff66; border: 1px solid #fff; font: bold 10px Arial, sans-serif; }
+    .status.planning { background: #ffff66; }
+    .status.experiment { background: #66ccff; }
+    .description { margin: 5px 0 8px; color: var(--text); }
+    .tag { display: inline-block; margin: 1px 3px 1px 0; padding: 2px 6px; color: #ffff99; background: #006600; border: 1px solid #00cc00; font: 11px "Courier New", monospace; }
+    .details { margin: 8px 0 0; padding-left: 18px; color: var(--muted); }
+    .details li { margin: 3px 0; }
+    .note { padding: 8px; color: #000; background: #ffffcc; border: 2px solid #888; }
+    footer {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 14px;
+      padding: 8px;
+      color: #8fdf8f;
+      background: #002800;
+      border: 3px double #00cc00;
+      font: 11px "Courier New", monospace;
+    }
+    a { color: #66ccff; }
+    @media (max-width: 700px) {
+      nav { flex-direction: column; align-items: stretch; }
+      .nav-logo { text-align: center; }
+      .nav-links { justify-content: center; }
+      .work-grid { grid-template-columns: 1fr; }
+      h1 { font-size: 34px; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a class="nav-logo" href="index.html">MALACHITEVR</a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#projects">Projects</a></li>
+      <li><a href="pcbuilds.html">PC Builds</a></li>
+      <li><a href="enterprise.html">Enterprise</a></li>
+      <li><a href="mypc.html">My PC</a></li>
+      <li><a class="active" href="my-current-work.html">Current Work</a></li>
+    </ul>
+  </nav>
+
+  <div class="wip-bar">&#9888; This website is a work in progress. Some info may not be correct.</div>
+  <marquee behavior="scroll" direction="left" scrollamount="5">*** CURRENT WORK LOG *** MINECRAFT • CHROMIUM • LOCAL AI • INFRASTRUCTURE • VR ***</marquee>
+
+  <main>
+    <div class="hero">
+      <div class="eyebrow">Workbench &middot; Projects in motion</div>
+      <h1>What I'm <span style="color:#ffff00;">building.</span></h1>
+      <p>A running snapshot of the servers, tools, experiments, and systems currently taking up space on the workbench.</p>
+      <p><strong>Focus areas:</strong> game infrastructure, low-level software, local AI, networking, virtualization, and immersive tech.</p>
+    </div>
+
+    <section>
+      <div class="section-label">Active builds</div>
+      <h2>Currently in the workshop.</h2>
+      <div class="work-grid">
+        <article class="work-card featured">
+          <span class="number">01</span><span class="status">ACTIVE</span>
+          <h3>FantasyJava+</h3>
+          <p class="description">A modded Minecraft 1.20.1 server project under the Malachite LLC banner, built around Forge and a large client setup.</p>
+          <ul class="details"><li>Forge 47.4.20 with a setup of roughly 234 mods</li><li>Performance work with C2ME, Chunky, and Distant Horizons</li><li>Testing Java 17, 21, and 25 compatibility</li></ul>
+          <span class="tag">Minecraft</span><span class="tag">Forge</span><span class="tag">Server performance</span>
+        </article>
+        <article class="work-card featured">
+          <span class="number">02</span><span class="status">BUILDING</span>
+          <h3>Chromium from source</h3>
+          <p class="description">Building Chromium on Windows and making the source tree easier to edit and work with in Visual Studio.</p>
+          <ul class="details"><li>Source tree: <code>E:\chromium\src</code></li><li>Using GN, Ninja, and autoninja</li><li>One build reached roughly 79,255 actions</li></ul>
+          <span class="tag">C++</span><span class="tag">Visual Studio</span><span class="tag">GN / Ninja</span>
+        </article>
+        <article class="work-card">
+          <span class="number">03</span><span class="status">ACTIVE</span>
+          <h3>Romeo &amp; local AI</h3>
+          <p class="description">Exploring local roleplay and general-purpose AI with Ollama, GGUF models, Hugging Face, and a 64GB RAM / 12GB VRAM workstation.</p>
+          <ul class="details"><li>Local inference with models that keep large knowledge capacity</li><li>Testing model templates and context behavior</li><li>Using the local Ollama chat API at <code>127.0.0.1:11434</code></li></ul>
+          <span class="tag">Ollama</span><span class="tag">GGUF</span><span class="tag">Python</span>
+        </article>
+        <article class="work-card">
+          <span class="number">04</span><span class="status">BUILDING</span>
+          <h3>Ollama service proxy</h3>
+          <p class="description">A local proxy layer for connecting Ollama-powered models to services such as JanitorAI while handling API and template differences.</p>
+          <ul class="details"><li>Investigating HTTP 500 responses and template failures</li><li>Keeping the model server local while exposing a compatible interface</li></ul>
+          <span class="tag">REST API</span><span class="tag">Ollama</span><span class="tag">Proxy</span>
+        </article>
+        <article class="work-card">
+          <span class="number">05</span><span class="status">ACTIVE</span>
+          <h3>Discord modmail bot</h3>
+          <p class="description">A moderation bridge that routes user DMs to a moderator channel and sends moderator replies back to the original user.</p>
+          <ul class="details"><li>Usernames, avatars, images, and files</li><li>Server selection, setup commands, and moderator-only channels</li><li>Built with Python 3.13.15</li></ul>
+          <span class="tag">Python</span><span class="tag">Discord</span><span class="tag">Automation</span>
+        </article>
+        <article class="work-card">
+          <span class="number">06</span><span class="status planning">EXPLORING</span>
+          <h3>SlimeVR / VRChat tracking</h3>
+          <p class="description">Improving wireless tracking reliability with HaritoraX 2, SlimeVR, OSC, and Bluetooth interference testing.</p>
+          <ul class="details"><li>Testing USB 3.x, router proximity, and metal furniture interference</li><li>Considering a dedicated Bluetooth adapter and Ethernet tracking laptop</li></ul>
+          <span class="tag">VR</span><span class="tag">OSC</span><span class="tag">Bluetooth</span>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label">Systems lab</div>
+      <h2>Infrastructure and experiments.</h2>
+      <div class="work-grid">
+        <article class="work-card"><span class="number">LAB-01</span><h3>Virtualization &amp; passthrough</h3><p class="description">Hyper-V, GPU-P, DDA, and Proxmox VE 9 experiments involving GPU passthrough, NVMe passthrough, CPU assignment, and guest driver files.</p><span class="tag">Hyper-V</span><span class="tag">GPU-P</span><span class="tag">Proxmox</span></article>
+        <article class="work-card"><span class="number">LAB-02</span><h3>Networking from home to cloud</h3><p class="description">Working with Tailscale exit nodes on Azure ARM VMs, Cloudflare/cloudflared, Playit.gg, Spectrum, and Wi-Fi 6 networking for game services.</p><span class="tag">Tailscale</span><span class="tag">Azure</span><span class="tag">Cloudflare</span></article>
+        <article class="work-card"><span class="number">LAB-03</span><h3>Remote desktop &amp; streaming</h3><p class="description">Tuning Parsec between Ohio and South Carolina around latency, bitrate, resolution, and 60 FPS streaming.</p><span class="tag">Parsec</span><span class="tag">60 FPS</span><span class="tag">Networking</span></article>
+        <article class="work-card"><span class="number">LAB-04</span><h3>GPU stability</h3><p class="description">Comparing NVIDIA driver branches and tuning the RTX 3060 for VR workloads, including a memory-clock reduction that improved texture stability.</p><span class="tag">RTX 3060</span><span class="tag">VR</span><span class="tag">Drivers</span></article>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label">Lab notes</div>
+      <h2>What ties it together.</h2>
+      <div class="note"><strong>One workstation, many directions.</strong> The common thread is practical systems work: making software build, making servers perform, making local services cooperate, and making hardware do useful things without hiding the interesting details.</div>
+    </section>
+  </main>
+
+  <footer><span>MalachiteVR &mdash; current work log</span><a href="index.html">Return to portfolio</a></footer>
+</body>
+</html>
