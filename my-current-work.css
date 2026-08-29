@@ -1,0 +1,152 @@
+:root {
+      --bg: #001900;
+      --panel: #003d00;
+      --panel-dark: #002800;
+      --green: #00ff66;
+      --bright: #ffff66;
+      --text: #d8ffd8;
+      --muted: #aaffaa;
+      --border: #33ff33;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background: var(--bg);
+      font: 13px/1.45 Arial, Helvetica, sans-serif;
+      background-image: linear-gradient(#003b00 1px, transparent 1px), linear-gradient(90deg, #003b00 1px, transparent 1px);
+      background-size: 16px 16px;
+    }
+    body::before {
+      content: "";
+      display: block;
+      height: 12px;
+      background: #004d00;
+      border-bottom: 2px outset var(--green);
+    }
+    body::after {
+      content: "Best viewed with a modern browser • MalachiteVR • 2000s Web Edition";
+      display: block;
+      padding: 18px 0 28px;
+      color: #76d976;
+      text-align: center;
+      font: 11px "Courier New", monospace;
+    }
+    nav, main, footer, .wip-bar, marquee { width: 900px; max-width: 94%; margin-left: auto; margin-right: auto; }
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-top: 12px;
+      padding: 7px;
+      background: #006600;
+      border: 3px ridge #8aff8a;
+      box-shadow: 4px 4px #000;
+    }
+    .nav-logo {
+      color: #fff;
+      text-decoration: none;
+      white-space: nowrap;
+      font: 900 24px "Courier New", monospace;
+      letter-spacing: -2px;
+      text-shadow: 2px 2px #000;
+    }
+    .nav-links { display: flex; flex-wrap: wrap; gap: 3px; margin: 0; padding: 0; list-style: none; }
+    .nav-links a {
+      display: block;
+      min-width: 70px;
+      padding: 4px 9px;
+      color: #000;
+      text-align: center;
+      text-decoration: none;
+      text-transform: uppercase;
+      background: linear-gradient(#d7ffd7, #55cc55);
+      border: 2px outset #eaffea;
+      box-shadow: 1px 1px #000;
+      font: bold 11px Arial, sans-serif;
+    }
+    .nav-links a:hover, .nav-links a.active { background: var(--bright); border-style: inset; }
+    .wip-bar {
+      margin-top: 8px;
+      padding: 5px 8px;
+      color: #000;
+      text-align: center;
+      background: #ffffcc;
+      border: 2px solid #006600;
+      border-left-width: 5px;
+      font: 12px "Times New Roman", serif;
+    }
+    marquee {
+      display: block;
+      margin-top: 6px;
+      padding: 3px;
+      color: #ffff00;
+      background: #003300;
+      border: 2px inset #00aa00;
+      font: bold 12px "Courier New", monospace;
+    }
+    .hero, section {
+      margin-top: 12px;
+      padding: 18px;
+      background: var(--panel);
+      border: 3px ridge var(--border);
+      box-shadow: 5px 5px #000;
+    }
+    .hero { text-align: center; }
+    .eyebrow, .section-label {
+      display: inline-block;
+      margin-bottom: 8px;
+      padding: 3px 9px;
+      color: #000;
+      background: #00cc00;
+      border: 2px outset #baffba;
+      text-transform: uppercase;
+      font: bold 11px "Courier New", monospace;
+    }
+    h1, h2, h3 { color: #fff; font-family: "Times New Roman", serif; text-shadow: 2px 2px #000; }
+    h1 { margin: 8px 0; font-size: 42px; line-height: 1.05; }
+    h2 { margin: 8px 0 12px; padding-bottom: 4px; border-bottom: 2px solid #00cc00; font-size: 27px; }
+    h3 { margin: 4px 0; font-size: 19px; }
+    .hero p { max-width: 680px; margin: 8px auto; color: var(--text); }
+    .work-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .work-card {
+      position: relative;
+      padding: 12px;
+      background: var(--panel-dark);
+      border: 2px ridge #4dcc4d;
+      box-shadow: 2px 2px #000;
+    }
+    .work-card:hover { background: #005000; }
+    .work-card.featured { border-color: var(--bright); }
+    .number { color: #ffff00; font: bold 12px "Courier New", monospace; }
+    .status { float: right; padding: 2px 6px; color: #000; background: #66ff66; border: 1px solid #fff; font: bold 10px Arial, sans-serif; }
+    .status.planning { background: #ffff66; }
+    .status.experiment { background: #66ccff; }
+    .description { margin: 5px 0 8px; color: var(--text); }
+    .tag { display: inline-block; margin: 1px 3px 1px 0; padding: 2px 6px; color: #ffff99; background: #006600; border: 1px solid #00cc00; font: 11px "Courier New", monospace; }
+    .details { margin: 8px 0 0; padding-left: 18px; color: var(--muted); }
+    .details li { margin: 3px 0; }
+    .note { padding: 8px; color: #000; background: #ffffcc; border: 2px solid #888; }
+    footer {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 14px;
+      padding: 8px;
+      color: #8fdf8f;
+      background: #002800;
+      border: 3px double #00cc00;
+      font: 11px "Courier New", monospace;
+    }
+    a { color: #66ccff; }
+    @media (max-width: 700px) {
+      nav { flex-direction: column; align-items: stretch; }
+      .nav-logo { text-align: center; }
+      .nav-links { justify-content: center; }
+      .work-grid { grid-template-columns: 1fr; }
+      h1 { font-size: 34px; }
+    }
