@@ -32,7 +32,8 @@
   <p class="lead">
     A self-hosted TCP relay that lets anyone connect to your Minecraft Java server normally,
     while the public connection terminates at an Azure VM instead of your home network.
-    Players install nothing.
+    Players install nothing. It is not free, but a small relay VM can be a much cheaper,
+    better-value option than a managed Minecraft host while avoiding a home-router port forward.
   </p>
 
   <div class="diagram">
@@ -126,6 +127,14 @@ Minecraft Java
 <section id="azure">
 <h2>2. Create the Azure VM</h2>
 <p>Create a Linux VM in the Azure Portal.</p>
+
+<div class="note">
+<strong>Cost and value:</strong> This setup still has a monthly Azure cost (and possibly
+public-IP or bandwidth charges). For a small server, though, the relay needs very little
+compute, so it can be substantially cheaper than paying for full managed cloud hosting.
+You keep control of the Minecraft server at home while putting the public-facing connection
+on the VM—often a dramatically better value for the money.
+</div>
 
 <table>
 <tr><th>Setting</th><th>Recommended value</th></tr>
@@ -359,7 +368,9 @@ Home Minecraft PC :25565
 </div>
 
 <p>This keeps the public Minecraft endpoint on Azure rather than your residential
-connection.</p>
+connection. It also avoids exposing a port directly from your home router to the Minecraft
+PC, reducing the risk that comes with port forwarding while still letting players join
+normally.</p>
 
 <h3>Recommended hardening</h3>
 <ul class="checklist">
