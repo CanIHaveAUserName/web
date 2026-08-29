@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#00cc55" />
+  <meta name="description" content="Apply to join the Malachite modded Minecraft server." />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="MalachiteVR" />
+  <meta property="og:title" content="Join the Modded Minecraft Server — MalachiteVR" />
+  <meta property="og:description" content="Send an application to join the Malachite modded Minecraft server." />
+  <meta property="og:url" content="https://malachitevr.win/minecraft-application.html" />
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="stylesheet" href="minecraft-application.css" />
+  <title>Join the Server &mdash; MalachiteVR</title>
+</head>
+<body>
+  <nav>
+    <a class="nav-logo" href="index.html">MALACHITEVR</a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="my-current-work.html">Projects</a></li>
+      <li><a href="mypc.html">My PC</a></li>
+      <li><a href="pcbuilds.html">PC Builds</a></li>
+      <li><a href="minecraft-application.html" class="active">Join Server</a></li>
+    </ul>
+  </nav>
+
+  <div class="wip-bar"><span>&#9888;</span> This website is a work in progress. Some info may not be correct.</div>
+
+  <main>
+    <header class="page-hero">
+      <div class="hero-tag">Modded Minecraft &middot; Join Request</div>
+      <h1>Enter the<br /><span>Malachite Realm.</span></h1>
+      <p>Want to play on the modded server? Tell us a little about yourself and what you enjoy in Minecraft.</p>
+    </header>
+
+    <section class="application-section" aria-labelledby="application-title">
+      <div class="section-label">Server Application</div>
+      <h2 id="application-title">Apply to join.</h2>
+      <p class="intro">Fields marked with <strong>*</strong> are required. When you submit, your email app will open with the completed application ready to send.</p>
+
+      <form id="server-application">
+        <fieldset>
+          <legend>Player details</legend>
+          <div class="form-grid">
+            <label>
+              Minecraft username <span aria-hidden="true">*</span>
+              <input name="Minecraft username" autocomplete="username" required maxlength="32" placeholder="Your in-game name" />
+            </label>
+            <label>
+              Discord username
+              <input name="Discord username" autocomplete="username" maxlength="64" placeholder="name or name#0000" />
+            </label>
+            <label>
+              Age range <span aria-hidden="true">*</span>
+              <select name="Age range" required>
+                <option value="" selected disabled>Select one</option>
+                <option>Under 13</option>
+                <option>13–15</option>
+                <option>16–17</option>
+                <option>18+</option>
+                <option>Prefer not to say</option>
+              </select>
+            </label>
+            <label>
+              Time zone <span aria-hidden="true">*</span>
+              <input name="Time zone" required maxlength="64" placeholder="e.g. EST / UTC−5" />
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>About your playstyle</legend>
+          <div class="form-grid">
+            <label>
+              How often do you expect to play? <span aria-hidden="true">*</span>
+              <select name="Expected playtime" required>
+                <option value="" selected disabled>Select one</option>
+                <option>A few times a month</option>
+                <option>About once a week</option>
+                <option>Several times a week</option>
+                <option>Most days</option>
+              </select>
+            </label>
+            <label>
+              Favorite way to play
+              <select name="Favorite playstyle">
+                <option value="" selected>Choose an option</option>
+                <option>Building and decorating</option>
+                <option>Tech and automation</option>
+                <option>Exploration and adventure</option>
+                <option>Farming and resource gathering</option>
+                <option>Community projects</option>
+                <option>A little of everything</option>
+              </select>
+            </label>
+          </div>
+          <label>
+            What modded Minecraft experience do you have? <span aria-hidden="true">*</span>
+            <textarea name="Modded Minecraft experience" required maxlength="1000" placeholder="Tell us about modpacks or mods you have played, or let us know if you are new to modded Minecraft."></textarea>
+          </label>
+          <label>
+            Why would you like to join the server? <span aria-hidden="true">*</span>
+            <textarea name="Why I would like to join" required maxlength="1500" placeholder="What sounds fun to you about playing here?"></textarea>
+          </label>
+          <label>
+            Anything else we should know?
+            <textarea name="Additional notes" maxlength="1000" placeholder="Optional: project ideas, friends you know on the server, or anything else."></textarea>
+          </label>
+        </fieldset>
+
+        <label class="check-row">
+          <input type="checkbox" name="Agrees to be respectful" required />
+          <span>I agree to be respectful to other players and follow the server rules. <strong>*</strong></span>
+        </label>
+
+        <button type="submit">Create Application Email &#9993;</button>
+        <p id="form-status" class="form-status" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <aside class="notice">
+      <strong>Heads up:</strong> Applying does not guarantee access. Please make sure your Minecraft and Discord usernames are correct so we can contact you.
+    </aside>
+  </main>
+
+  <footer>
+    <span>&copy; 2026 MalachiteVR</span>
+    <a href="my-current-work.html">&#8592; Back to projects</a>
+  </footer>
+
+  <script>
+    const form = document.querySelector('#server-application');
+    const status = document.querySelector('#form-status');
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (!form.reportValidity()) return;
+
+      const lines = ['Modded Minecraft Server Application', '==================================', ''];
+      const data = new FormData(form);
+      for (const [field, value] of data.entries()) {
+        lines.push(`${field}: ${value === 'on' ? 'Yes' : value}`);
+      }
+
+      const subject = encodeURIComponent('Minecraft Server Application — ' + data.get('Minecraft username'));
+      const body = encodeURIComponent(lines.join('\n'));
+      window.location.href = `mailto:malachite@malachitevr.win?subject=${subject}&body=${body}`;
+      status.textContent = 'Your email app should be open now. Send that message to finish your application.';
+    });
+  </script>
+</body>
+</html>
