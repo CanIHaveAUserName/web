@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#00cc55">
+<meta name="description" content="Build a Minecraft Java TCP relay with Oracle Cloud Always Free, Tailscale, and HAProxy.">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="stylesheet" href="minecraft-relay-guide.css">
+<title>Oracle Free Minecraft Relay Guide &mdash; MalachiteVR</title>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="index.html">MALACHITEVR</a>
+  <ul class="nav-links">
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="index.html#games">Games</a></li>
+    <li><a href="my-current-work.html">Projects</a></li>
+    <li><a href="pcbuilds.html">PC Builds</a></li>
+    <li><a href="minecraft-application.html">Join Server</a></li>
+    <li><a href="mypc.html">My PC</a></li>
+    <li><a href="minecraft_relay_guide.html">Azure Relay</a></li>
+    <li><a href="oracle-free-minecraft-relay-guide.html" class="active">Oracle Free Relay</a></li>
+  </ul>
+</nav>
+<div class="wip-bar"><span>&#9888;</span> This website is a work in progress. Some info may not be correct.</div>
+
+<header class="guide-hero">
+  <span class="badge">Minecraft Java &bull; Oracle Always Free &bull; Tailscale &bull; HAProxy</span>
+  <h1>Build a Minecraft Relay<br><span>on Oracle Always Free.</span></h1>
+  <p class="lead">Use Oracle Cloud's Always Free micro VM as a public TCP relay for a Minecraft Java server hosted at home. Players connect normally; HAProxy forwards their connection privately over Tailscale, so your home IP and router port stay out of public view.</p>
+  <div class="diagram"><pre>
+                         PLAYER
+                           │
+                    mc.example.com
+                           ▼
+              ┌────────────────────┐
+              │ ORACLE CLOUD MICRO │
+              │ Public IP :25565   │
+              │ HAProxy            │
+              └─────────┬──────────┘
+                        │ Tailscale
+                        ▼
+              ┌────────────────────┐
+              │ HOME MINECRAFT PC  │
+              │ Tailscale IP:25565 │
+              └────────────────────┘
+</pre></div>
+  <div class="card-grid">
+    <div class="card"><strong>Cost</strong>Always Free eligible</div>
+    <div class="card"><strong>Player software</strong>None</div>
+    <div class="card"><strong>Home port forward</strong>Not required</div>
+    <div class="card"><strong>Public endpoint</strong>Oracle Cloud VM</div>
+    <div class="card"><strong>TCP relay</strong>HAProxy</div>
+  </div>
+</header>
+
+<nav class="guide-directory" aria-label="Guide directory">
+  <a href="#architecture">Architecture</a>
+  <a href="#oracle">Oracle VM</a>
+  <a href="#tailscale">Tailscale</a>
+  <a href="#minecraft">Minecraft</a>
+  <a href="#haproxy">HAProxy</a>
+  <a href="#firewall">Firewall</a>
+  <a href="#dns">DNS</a>
+  <a href="#testing">Testing</a>
+  <a href="#security">Security</a>
+  <a href="#troubleshooting">Troubleshooting</a>
+</nav>
+
+<main>
+<section id="architecture">
+<h2>1. How it works</h2>
+<p>The Oracle VM is the only public Minecraft endpoint. HAProxy accepts a player's TCP connection and forwards it through the encrypted Tailscale network to the Minecraft PC's private Tailscale address.</p>
+<div class="note"><strong>Players need nothing extra:</strong> they enter your domain or Oracle public IP in the normal Minecraft Java multiplayer screen. Tailscale is only between the Oracle VM and the computer hosting Minecraft.</div>
+<div class="warning"><strong>Player IP and bans:</strong> A raw TCP relay hides players' real IP addresses from the Minecraft Java console. The server sees the relay's Tailscale address instead, so vanilla IP bans become far less useful: banning it can block every player using the relay. Moderate with Minecraft accounts, permissions, logs, and server-side tools rather than relying on IP bans alone.</div>
+</section>
+
+<section id="oracle">
+<h2>2. Create the Oracle Always Free VM</h2>
+<p>Sign in to the <a href="https://cloud.oracle.com/">Oracle Cloud Console</a>. Always Free compute must be created in the tenancy's home region, and free capacity can be temporarily unavailable.</p>
+<table>
+<tr><th>Setting</th><th>Use this value</th></tr>
+<tr><td>Image</td><td>Ubuntu 24.04 (Always Free eligible, if offered)</td></tr>
+<tr><td>Shape</td><td><code>VM.Standard.E2.1.Micro</code> (AMD)</td></tr>
+<tr><td>CPU</td><td>1/8 OCPU &mdash; not a full CPU core</td></tr>
+<tr><td>Memory</td><td>1 GB</td></tr>
+<tr><td>Networking</td><td>Public subnet and public IPv4 address</td></tr>
+<tr><td>SSH access</td><td>Add your SSH public key</td></tr>
+</table>
+<p>In the Console, open <strong>Compute &rarr; Instances &rarr; Create instance</strong>, choose the image, then select <strong>Change shape &rarr; AMD &rarr; VM.Standard.E2.1.Micro</strong>. Leave default VCN/subnet creation enabled unless you already have a suitable public subnet. Click <strong>Create</strong> and wait for the instance to show <strong>Running</strong>.</p>
+<div class="note"><strong>Important:</strong> This tiny VM is appropriate for HAProxy and Tailscale only. Do not run Minecraft on it. Oracle documents the shape as 1 GB RAM, 1/8 OCPU, and up to 50 Mbps internet bandwidth. Check Oracle's <a href="https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm">Always Free resource page</a> before creating it, since eligibility and availability can change.</div>
+<h3>Connect over SSH</h3>
+<pre><code>ssh ubuntu@YOUR_ORACLE_PUBLIC_IP</code></pre>
+<p>Use the username shown for the image you selected. Ubuntu images normally use <code>ubuntu</code>.</p>
+</section>
+
+<section id="tailscale">
+<h2>3. Install Tailscale on the Oracle VM</h2>
+<pre><code>curl -fsSL https://tailscale.com/install.sh | sh
+sudo tailscale up
+tailscale status</code></pre>
+<p>Authorize the VM into the same Tailscale network as the computer running Minecraft. On the Minecraft PC, get its Tailscale IPv4 address:</p>
+<pre><code>tailscale ip -4</code></pre>
+<p>From the Oracle VM, test that address before configuring HAProxy:</p>
+<pre><code>sudo apt update
+sudo apt install netcat-openbsd -y
+nc -vz MINECRAFT_PC_TAILSCALE_IP 25565</code></pre>
+<p>A successful test ends with <code>succeeded!</code>. If it fails, check Tailscale, Windows Firewall, and that Minecraft is running before continuing.</p>
+</section>
+
+<section id="minecraft">
+<h2>4. Configure Minecraft</h2>
+<p>Open the server's <code>server.properties</code> and leave the bind address blank:</p>
+<pre><code>server-ip=
+server-port=25565</code></pre>
+<p>Restart the Minecraft server. Make sure Windows Firewall permits TCP 25565 from the Tailscale interface or network.</p>
+</section>
+
+<section id="haproxy">
+<h2>5. Install and configure HAProxy</h2>
+<pre><code>sudo apt update
+sudo apt install haproxy -y
+sudo cp /etc/haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg.backup
+sudo nano /etc/haproxy/haproxy.cfg</code></pre>
+<p>Replace the configuration with this, substituting the Minecraft PC's Tailscale IP:</p>
+<pre><code>global
+    log /dev/log local0
+    log /dev/log local1 notice
+    daemon
+
+defaults
+    log global
+    mode tcp
+    option tcplog
+    timeout connect 10s
+    timeout client 1h
+    timeout server 1h
+
+frontend minecraft
+    bind *:25565
+    default_backend minecraft_home
+
+backend minecraft_home
+    server home MINECRAFT_PC_TAILSCALE_IP:25565 check</code></pre>
+<pre><code>sudo haproxy -c -f /etc/haproxy/haproxy.cfg
+sudo systemctl restart haproxy
+sudo systemctl enable haproxy
+sudo ss -lntp | grep 25565</code></pre>
+<p>The validation should say the configuration is valid, and the final command should show HAProxy listening on port 25565.</p>
+</section>
+
+<section id="firewall">
+<h2>6. Allow Minecraft through Oracle and Ubuntu</h2>
+<h3>Oracle VCN security list</h3>
+<p>Open <strong>Networking &rarr; Virtual cloud networks</strong>, choose the VCN and public subnet used by the instance, then edit its security list ingress rules. Add:</p>
+<table>
+<tr><th>Source CIDR</th><th>Protocol</th><th>Destination port</th><th>Purpose</th></tr>
+<tr><td>0.0.0.0/0</td><td>TCP</td><td>25565</td><td>Minecraft Java relay</td></tr>
+<tr><td>Your public IP/32</td><td>TCP</td><td>22</td><td>SSH management</td></tr>
+</table>
+<p>If you cannot restrict SSH to your address, use <code>0.0.0.0/0</code> temporarily and secure the account with SSH keys. Do not expose any port for Tailscale.</p>
+<h3>Ubuntu firewall</h3>
+<pre><code>sudo ufw status
+sudo ufw allow 22/tcp
+sudo ufw allow 25565/tcp</code></pre>
+</section>
+
+<section id="testing">
+<h2>7. Test the public relay</h2>
+<p>Copy the instance's public IPv4 address from the Oracle Console. In Minecraft Java, connect to:</p>
+<pre><code>YOUR_ORACLE_PUBLIC_IP:25565</code></pre>
+<p>On the VM, these commands help while testing:</p>
+<pre><code>sudo journalctl -u haproxy -f
+sudo tcpdump -ni any tcp port 25565</code></pre>
+</section>
+
+<section id="dns">
+<h2>8. Add a Minecraft domain</h2>
+<p>Create a DNS-only A record at your DNS provider:</p>
+<table><tr><th>Type</th><th>Name</th><th>Value</th></tr>
+<tr><td>A</td><td>mc</td><td>YOUR_ORACLE_PUBLIC_IP</td></tr></table>
+<p>Players can then use <code>mc.example.com</code>. Do not use an HTTP reverse proxy for this record; Minecraft needs a direct TCP connection to HAProxy.</p>
+</section>
+
+<section id="security">
+<h2>9. Remove the home port forward</h2>
+<p>Once the public test works, remove any router rule that exposes TCP 25565 to the home Minecraft PC. Only the Oracle VM should be reachable from the internet.</p>
+<ul class="checklist">
+<li>Keep the Oracle security list limited to SSH and TCP 25565.</li>
+<li>Restrict SSH to your own IP where possible.</li>
+<li>Use Tailscale ACLs to limit what the relay can reach.</li>
+<li>Keep Ubuntu, Tailscale, and HAProxy updated.</li>
+<li>Watch HAProxy logs for unexpected or abusive traffic.</li>
+</ul>
+<div class="warning"><strong>Always Free is not an uptime guarantee:</strong> Oracle can reclaim idle Always Free instances under its policy, and free-shape capacity may be unavailable. Keep your HAProxy configuration backed up and be prepared to recreate the relay if needed.</div>
+</section>
+
+<section id="troubleshooting">
+<h2>10. Troubleshooting</h2>
+<h3>HAProxy shows the backend as DOWN</h3>
+<pre><code>nc -vz MINECRAFT_PC_TAILSCALE_IP 25565
+tailscale status</code></pre>
+<p>Fix the private Tailscale path, Windows Firewall, or Minecraft server first.</p>
+<h3>No one can reach Oracle on port 25565</h3>
+<p>Confirm HAProxy is listening, then check both the Oracle VCN security-list rule and UFW. Both layers must allow TCP 25565.</p>
+<h3>The Always Free shape has no capacity</h3>
+<p>Try another availability domain if your home region offers one, or try again later. Oracle's capacity for free shapes is not guaranteed.</p>
+</section>
+</main>
+
+<footer>
+  <strong>Oracle Always Free Minecraft Relay Guide</strong>
+  <p>Oracle Cloud + Tailscale + HAProxy &bull; Vanilla-client friendly architecture</p>
+</footer>
+<script>
+document.querySelectorAll("pre").forEach(pre => {
+  const btn = document.createElement("button");
+  btn.className = "copy";
+  btn.textContent = "Copy";
+  btn.addEventListener("click", async () => {
+    const value = pre.innerText.replace(/^Copy\\n/, "");
+    try { await navigator.clipboard.writeText(value); btn.textContent = "Copied!"; }
+    catch { btn.textContent = "Select manually"; }
+    setTimeout(() => btn.textContent = "Copy", 1200);
+  });
+  pre.prepend(btn);
+});
+</script>
+</body>
+</html>

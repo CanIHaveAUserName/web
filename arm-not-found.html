@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARM Not Found — MalachiteVR</title>
+<style>
+  :root {
+    --bg: #0b0f0d;
+    --bg-panel: #101613;
+    --bg-panel-raised: #141c18;
+    --line: #22322a;
+    --malachite: #1f8a63;
+    --malachite-bright: #3ddb9a;
+    --malachite-dim: #16543f;
+    --text: #d9e6df;
+    --text-dim: #7d9188;
+    --text-faint: #4c5c54;
+    --warn: #d9a441;
+    --font-display: 'JetBrains Mono', 'Consolas', monospace;
+    --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 15% 0%, rgba(31,138,99,0.08), transparent 45%),
+      radial-gradient(circle at 85% 100%, rgba(31,138,99,0.05), transparent 40%);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.6;
+  }
+
+  a { color: var(--malachite-bright); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--malachite-bright); outline-offset: 3px; }
+
+  .wrap {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 64px 24px 96px;
+  }
+
+  /* ---- Header / status strip (signature element) ---- */
+  .eyebrow {
+    font-family: var(--font-display);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--malachite-bright);
+    margin-bottom: 14px;
+  }
+
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0 0 12px;
+    color: #f1f7f4;
+  }
+
+  .subhead {
+    color: var(--text-dim);
+    font-size: 16px;
+    max-width: 56ch;
+    margin: 0 0 32px;
+  }
+
+  .status-strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 48px;
+  }
+
+  .status-cell {
+    background: var(--bg-panel);
+    padding: 16px 18px;
+  }
+
+  .status-label {
+    font-family: var(--font-display);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 8px;
+  }
+
+  .status-value {
+    font-family: var(--font-display);
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dot--live { background: var(--malachite-bright); box-shadow: 0 0 8px var(--malachite-bright); }
+  .dot--none { background: var(--text-faint); }
+  .dot--warn { background: var(--warn); box-shadow: 0 0 8px var(--warn); }
+
+  /* ---- Section structure ---- */
+  section { margin-bottom: 48px; }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 10px;
+  }
+
+  .section-tag {
+    font-family: var(--font-display);
+    font-size: 11px;
+    color: var(--malachite-dim);
+    background: rgba(31,138,99,0.12);
+    border: 1px solid var(--malachite-dim);
+    padding: 3px 8px;
+    border-radius: 4px;
+    color: var(--malachite-bright);
+    letter-spacing: 0.04em;
+  }
+
+  h2 {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    color: #eef5f1;
+  }
+
+  p { color: var(--text); max-width: 68ch; }
+  p.dim { color: var(--text-dim); }
+
+  ul.risk-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+  }
+
+  ul.risk-list li {
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--malachite-dim);
+    border-radius: 4px;
+    padding: 12px 16px;
+    font-size: 14.5px;
+    color: var(--text);
+  }
+
+  ul.risk-list li strong { color: var(--malachite-bright); font-weight: 600; }
+
+  /* ---- Table ---- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14.5px;
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  th, td {
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  th {
+    font-family: var(--font-display);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    background: var(--bg-panel-raised);
+  }
+
+  tr:last-child td { border-bottom: none; }
+  td.activity { color: var(--malachite-bright); font-family: var(--font-display); font-size: 13.5px; }
+  td.desc { color: var(--text-dim); }
+
+  /* ---- Requirements grid ---- */
+  .req-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+  }
+
+  .req-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 16px;
+  }
+
+  .req-card .req-title {
+    font-family: var(--font-display);
+    font-size: 13px;
+    color: var(--malachite-bright);
+    margin-bottom: 6px;
+  }
+
+  .req-card .req-body { font-size: 13.5px; color: var(--text-dim); }
+
+  /* ---- Footer note ---- */
+  .footnote {
+    border-top: 1px solid var(--line);
+    padding-top: 24px;
+    margin-top: 56px;
+    font-size: 13px;
+    color: var(--text-faint);
+  }
+
+  @media (max-width: 640px) {
+    .status-strip { grid-template-columns: 1fr; }
+    .wrap { padding: 40px 18px 72px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow">// errno: ENODEV — dev infrastructure</div>
+  <h1>ARM Not Found</h1>
+  <p class="subhead">
+    A standing environment for testing and developing games and applications on
+    AARCH64 hardware before launch — because right now, none exists.
+  </p>
+
+  <div class="status-strip">
+    <div class="status-cell">
+      <div class="status-label">x86_64 coverage</div>
+      <div class="status-value"><span class="dot dot--live"></span>Fully tested</div>
+    </div>
+    <div class="status-cell">
+      <div class="status-label">ARM64 coverage</div>
+      <div class="status-value"><span class="dot dot--none"></span>Not yet tested</div>
+    </div>
+    <div class="status-cell">
+      <div class="status-label">Hardware access</div>
+      <div class="status-value"><span class="dot dot--warn"></span>In progress</div>
+    </div>
+  </div>
+
+  <section>
+    <div class="section-head">
+      <span class="section-tag">01</span>
+      <h2>Mission</h2>
+    </div>
+    <p>
+      I develop games and applications as independent personal projects, spanning
+      game development, tooling, and server infrastructure. The goal is software
+      that's reliable across the platforms people actually run — not just the one
+      I happen to build on.
+    </p>
+    <p class="dim">
+      All of my current development and testing hardware is x86_64. I don't own
+      any ARM64 devices, which means every build I ship today is untested on an
+      entire, increasingly common class of hardware.
+    </p>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <span class="section-tag">02</span>
+      <h2>Why ARM64 matters</h2>
+    </div>
+    <p class="dim" style="margin-bottom:16px;">
+      ARM64 isn't a niche target anymore — it covers Apple Silicon, a growing
+      share of Windows and Linux laptops, cloud instances, Linux SBCs, and
+      handheld gaming devices. Shipping without testing on it means these
+      problems get found by users instead of by me:
+    </p>
+    <ul class="risk-list">
+      <li><strong>Missing dependency builds</strong> — libraries or engine plugins that only ship x86_64 binaries</li>
+      <li><strong>Bad low-level assumptions</strong> — endianness, pointer size, or x86 SIMD code with no ARM (NEON) equivalent</li>
+      <li><strong>ARM-only runtime bugs</strong> — crashes or rendering issues that never appear on x86_64</li>
+      <li><strong>Architecture-specific performance issues</strong> — a build that's fine on x86_64 but unacceptably slow on ARM</li>
+    </ul>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <span class="section-tag">03</span>
+      <h2>Usage model</h2>
+    </div>
+    <table>
+      <thead>
+        <tr><th>Activity</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="activity">compile_builds</td>
+          <td class="desc">Confirming the build pipeline actually produces working ARM64 binaries</td>
+        </tr>
+        <tr>
+          <td class="activity">playtest</td>
+          <td class="desc">Running and interacting with a build directly on ARM64, not just compiling it</td>
+        </tr>
+        <tr>
+          <td class="activity">troubleshoot</td>
+          <td class="desc">Debugging crashes or bugs that only reproduce on ARM64</td>
+        </tr>
+        <tr>
+          <td class="activity">perf_check</td>
+          <td class="desc">Rough validation that a build runs acceptably — not precise benchmarking</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <span class="section-tag">04</span>
+      <h2>Requirements</h2>
+    </div>
+    <div class="req-grid">
+      <div class="req-card">
+        <div class="req-title">Persistent</div>
+        <div class="req-body">Environment and toolchain stay set up between sessions — not a one-shot reset.</div>
+      </div>
+      <div class="req-card">
+        <div class="req-title">Interactive-capable</div>
+        <div class="req-body">Enough compute to actually run a game or app, not just compile it.</div>
+      </div>
+      <div class="req-card">
+        <div class="req-title">Linux aarch64</div>
+        <div class="req-body">Latest stable release is sufficient — nothing exotic required.</div>
+      </div>
+      <div class="req-card">
+        <div class="req-title">SSH access</div>
+        <div class="req-body">Minimum requirement. GUI/desktop is a nice-to-have for visual checks.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="footnote">
+    Personal project — not affiliated with an open source organization or
+    educational institution. Hardware access sourced independently (cloud ARM
+    instances, local emulation, or physical hardware) rather than through a
+    formal grant program. Duration: ongoing.
+  </div>
+
+</div>
+</body>
+</html>

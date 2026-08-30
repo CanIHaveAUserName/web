@@ -21,6 +21,7 @@
     <li><a href="minecraft-application.html">Join Server</a></li>
     <li><a href="mypc.html">My PC</a></li>
     <li><a href="minecraft_relay_guide.html" class="active">Relay Guide</a></li>
+    <li><a href="oracle-free-minecraft-relay-guide.html">Oracle Free Relay</a></li>
   </ul>
 </nav>
 
@@ -99,6 +100,14 @@ private Tailscale address.
 <div class="note">
 <strong>Important:</strong> Tailscale is only used between the server owner's machines.
 Players do not need Tailscale, a VPN, a mod, or a custom launcher.
+</div>
+
+<div class="warning">
+<strong>Player IP and bans:</strong> This raw TCP relay hides players' real IP addresses from
+the Minecraft Java server console: the server sees the relay's Tailscale address instead.
+As a result, vanilla IP bans are much less useful&mdash;banning that address can block every
+player using the relay. Use Minecraft accounts, permissions, logs, and server-side moderation
+tools rather than relying on IP bans alone.
 </div>
 
 <div class="diagram">
