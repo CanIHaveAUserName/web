@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#63e887">
+  <meta name="description" content="Join MalachiteVR's Minecraft server: Wither Storm with Ice and Fire.">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" href="minecraft-server.css">
+  <title>Malachite Minecraft Server — MalachiteVR</title>
+</head>
+<body id="top">
+  <nav class="site-nav">
+    <a class="logo" href="index.html">MALACHITEVR</a>
+    <a class="guide-link" href="minecraft_relay_guide.html">Minecraft Relay Guide</a>
+  </nav>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow"><i></i> Now accepting survivors</p>
+        <h1>WITHER STORM<br><span>WITH ICE &amp; FIRE</span></h1>
+        <p class="intro">A survival adventure ruled by a world-devouring storm and a sky full of dragons. Gather your crew, prepare for the worst, and make a world worth defending.</p>
+        <div class="address-box">
+          <div><small>Server address</small><strong>play.malachitevr.win</strong></div>
+          <button type="button" class="copy-address">Copy IP</button>
+        </div>
+        <div class="actions">
+          <a class="button primary" href="https://mcpack.malachitevr.win/" target="_blank" rel="noopener">Download the Pack ↗</a>
+          <a class="button quiet" href="#join">How to join</a>
+        </div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="moon"></div>
+        <div class="storm"><b></b><b></b><b></b><b></b></div>
+        <div class="hills"></div>
+        <p>THE STORM IS COMING</p>
+      </div>
+    </section>
+
+    <section class="facts" aria-label="Quick facts">
+      <div><small>Game</small><strong>Minecraft Java</strong></div>
+      <div><small>Version</small><strong>1.20.1</strong></div>
+      <div><small>Loader</small><strong>Forge 47.4.20</strong></div>
+      <div><small>Server</small><strong>DDoS protected</strong></div>
+    </section>
+
+    <section class="section adventure">
+      <p class="eyebrow">The world is not safe</p>
+      <div class="section-title"><h2>Can you outlast it?</h2><p>Malachite is a modded survival server built around two enormous threats: the relentless Wither Storm and the powerful creatures of Ice and Fire.</p></div>
+      <div class="features">
+        <article><span>✦</span><h3>Cracker's Wither Storm</h3><p>A massive, sentient Wither that consumes terrain, hunts players, and can be seen from over 10,000 blocks away.</p></article>
+        <article><span>♜</span><h3>Ice and Fire</h3><p>Face dragons, sea serpents, and mythical creatures—or tame a dragon and ride into battle.</p></article>
+        <article><span>✹</span><h3>TACZ &amp; more</h3><p>Modern combat, Cave Dweller, and extra encounters keep every expedition dangerous.</p></article>
+      </div>
+    </section>
+
+    <section class="section join" id="join">
+      <div><p class="eyebrow">Start your adventure</p><h2>How to join</h2></div>
+      <ol>
+        <li><b>01</b><div><h3>Install Prism Launcher</h3><p>The pack was exported for Prism Launcher. Install it before downloading the pack.</p></div></li>
+        <li><b>02</b><div><h3>Download &amp; import the pack</h3><p>Download the pack below and import it into Prism Launcher.</p><a href="https://mcpack.malachitevr.win/" target="_blank" rel="noopener">Open pack download ↗</a></div></li>
+        <li><b>03</b><div><h3>Use the exact versions</h3><p>Minecraft <strong>1.20.1</strong> · Forge <strong>47.4.20</strong></p></div></li>
+        <li><b>04</b><div><h3>Connect and survive</h3><p>Add <code>play.malachitevr.win</code> in Multiplayer and join us.</p></div></li>
+      </ol>
+    </section>
+
+    <section class="requirements">
+      <div><p class="eyebrow">Before you launch</p><h2>Required versions</h2><p>You must use these exact versions to connect. Allocate at least <strong>4–6 GB of RAM</strong> in your launcher for a smoother experience.</p></div>
+      <div class="versions"><div><small>🎮 Minecraft</small><strong>1.20.1</strong></div><div><small>🔧 Forge</small><strong>47.4.20</strong></div></div>
+    </section>
+
+    <section class="section specs">
+      <p class="eyebrow">Behind the scenes</p><h2>Server specs</h2>
+      <div class="spec-grid">
+        <div>💿<p>Operating system<strong>Windows 10 Enterprise IoT LTSC</strong></p></div><div>🧠<p>Processor<strong>4-core Ryzen · 4.7 GHz</strong></p></div><div>💾<p>Memory<strong>32 GB RAM</strong></p></div>
+        <div>☕<p>Java runtime<strong>Java 21</strong></p></div><div>📡<p>Network<strong>30 Mbps up / down</strong></p></div><div>🔒<p>Protection<strong>Advanced firewall · DDoS protected</strong></p></div>
+      </div>
+    </section>
+
+    <aside class="warning"><b>!</b><div><h2>Keep the pack intact.</h2><p>Do not update mods or add extras to the modpack. If something crashes, check the server's support channel or tag a staff member on Discord.</p></div></aside>
+  </main>
+
+  <footer><span>© MalachiteVR · Wither Storm with Ice and Fire</span><a href="#top">Back to top ↑</a></footer>
+  <script>
+    document.querySelector('.copy-address').addEventListener('click', async event => {
+      const button = event.currentTarget;
+      try { await navigator.clipboard.writeText('play.malachitevr.win'); button.textContent = 'Copied!'; }
+      catch { button.textContent = 'Copy failed'; }
+      setTimeout(() => button.textContent = 'Copy IP', 1600);
+    });
+  </script>
+</body>
+</html>
