@@ -1,3 +1,34 @@
+/* RETRO FONT THEME */
+@import url("https://fonts.googleapis.com/css2?family=VT323&display=swap");
+
+html, body {
+  font-family: "VT323", "Courier New", monospace !important;
+}
+
+body, body * {
+  font-family: "VT323", "Courier New", monospace !important;
+}
+
+/* Keep icons and glyphs visually intact where their own font is required. */
+i, svg, .icon, [class*="icon"] {
+  font-family: inherit;
+}
+
+/* Slightly stronger terminal-era typography */
+body {
+  letter-spacing: 0.02em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "VT323", "Courier New", monospace !important;
+  letter-spacing: 0.03em;
+}
+
+button, input, textarea, select {
+  font-family: "VT323", "Courier New", monospace !important;
+}
+
+
 :root{
   --green:#00ff66; --green-dark:#008c38; --lime:#ccff00;
   --bg:#001900; --panel:#003d00; --panel-dark:#002800;
@@ -132,4 +163,35 @@ footer a{color:var(--blue); text-decoration:none}
   .specs-grid,.games-grid,.process-steps,.status-block{grid-template-columns:1fr}
   h1{font-size:34px}
   section,.note,nav,footer,.wip-bar,.page-hero{max-width:94%; width:94%}
+}
+
+
+
+@import url("https://fonts.googleapis.com/css2?family=VT323&display=swap");
+
+html, body {
+  font-family: "VT323", "Courier New", monospace !important;
+}
+
+body, body * {
+  font-family: "VT323", "Courier New", monospace !important;
+}
+
+/* Keep icons and glyphs visually intact where their own font is required. */
+i, svg, .icon, [class*="icon"] {
+  font-family: inherit;
+}
+
+/* Slightly stronger terminal-era typography */
+body {
+  letter-spacing: 0.02em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "VT323", "Courier New", monospace !important;
+  letter-spacing: 0.03em;
+}
+
+button, input, textarea, select {
+  font-family: "VT323", "Courier New", monospace !important;
 }
