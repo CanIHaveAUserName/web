@@ -50,6 +50,22 @@
       <div><small>Server location</small><strong>Ashburn, VA</strong></div>
     </section>
 
+    <section class="section status" id="status">
+      <div><p class="eyebrow">Live</p><h2>Server status</h2></div>
+      <div class="status-card">
+        <div class="status-head">
+          <span class="status-dot" id="statusDot"></span>
+          <strong id="statusText">Checking…</strong>
+          <span class="status-updated" id="statusUpdated"></span>
+        </div>
+        <div class="status-grid">
+          <div><small>Players</small><strong id="statusPlayers">—</strong></div>
+          <div><small>Version</small><strong id="statusVersion">—</strong></div>
+          <div><small>Latency</small><strong id="statusLatency">—</strong></div>
+        </div>
+      </div>
+    </section>
+
     <section class="section adventure">
       <p class="eyebrow">The world is not safe</p>
       <div class="section-title"><h2>Can you outlast it?</h2><p>Malachite is a modded survival server built around two enormous threats: the relentless Wither Storm and the powerful creatures of Ice and Fire.</p></div>
@@ -94,6 +110,62 @@
       catch { button.textContent = 'Copy failed'; }
       setTimeout(() => button.textContent = 'Copy IP', 1600);
     });
+
+    (function () {
+      const SERVER_ADDRESS = 'play.malachitevr.win';
+      const POLL_MS = 30000;
+      const dot = document.getElementById('statusDot');
+      const text = document.getElementById('statusText');
+      const updated = document.getElementById('statusUpdated');
+      const players = document.getElementById('statusPlayers');
+      const version = document.getElementById('statusVersion');
+      const latency = document.getElementById('statusLatency');
+
+      function setState(state) {
+        dot.className = 'status-dot ' + state;
+      }
+
+      function stamp() {
+        const now = new Date();
+        updated.textContent = 'Updated ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      }
+
+      async function checkStatus() {
+        const started = performance.now();
+        try {
+          const res = await fetch('https://api.mcsrvstat.us/3/' + SERVER_ADDRESS, { cache: 'no-store' });
+          if (!res.ok) throw new Error('bad response');
+          const data = await res.json();
+          const elapsed = Math.round(performance.now() - started);
+
+          if (data.online) {
+            setState('online');
+            text.textContent = 'Online';
+            players.textContent = (data.players && typeof data.players.online === 'number')
+              ? `${data.players.online} / ${data.players.max}`
+              : '—';
+            version.textContent = data.version || '—';
+            latency.textContent = elapsed + ' ms';
+          } else {
+            setState('offline');
+            text.textContent = 'Offline';
+            players.textContent = '—';
+            version.textContent = '—';
+            latency.textContent = '—';
+          }
+        } catch (err) {
+          setState('unknown');
+          text.textContent = 'Unable to check';
+          players.textContent = '—';
+          version.textContent = '—';
+          latency.textContent = '—';
+        }
+        stamp();
+      }
+
+      checkStatus();
+      setInterval(checkStatus, POLL_MS);
+    })();
   </script>
 </body>
 </html>
