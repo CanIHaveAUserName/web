@@ -161,85 +161,113 @@
   </footer>
 
   <script>
-    document.querySelector('.copy-address').addEventListener('click', async event => {
-      event.preventDefault();
-      const link = event.currentTarget;
-      const original = link.textContent;
-      try { await navigator.clipboard.writeText('play.malachitevr.win'); link.textContent = 'Copied!'; }
-      catch { link.textContent = 'Copy failed'; }
-      setTimeout(() => link.textContent = original, 1600);
-    });
+(function () {
 
-    (function () {
-      const SERVER_ADDRESS = 'play.malachitevr.win';
-      const POLL_MS = 30000;
-      const dot = document.getElementById('statusDot');
-      const text = document.getElementById('statusText');
-      const updated = document.getElementById('statusUpdated');
-      const players = document.getElementById('statusPlayers');
-      const version = document.getElementById('statusVersion');
-      const latency = document.getElementById('statusLatency');
+  const QUERY_SERVER = 'http://132.226.56.65:8080/query';
+  const POLL_MS = 30000;
 
-      function setState(state) {
-        dot.className = 'status-dot ' + state;
-      }
+  const dot = document.getElementById('statusDot');
+  const text = document.getElementById('statusText');
+  const updated = document.getElementById('statusUpdated');
+  const players = document.getElementById('statusPlayers');
+  const version = document.getElementById('statusVersion');
+  const latency = document.getElementById('statusLatency');
 
-      function stamp() {
-        const now = new Date();
-        updated.textContent = 'Last checked ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      }
+  function setState(state) {
+    dot.className = 'status-dot ' + state;
+  }
 
-      async function pingClientDirectly() {
-        const started = performance.now();
-        try {
-          await fetch(`https://${SERVER_ADDRESS}/?cache_buster=${Date.now()}`, {
-            mode: 'no-cors',
-            cache: 'no-store'
-          });
-          return Math.round(performance.now() - started);
-        } catch (err) {
-          return null;
+  function stamp() {
+    const now = new Date();
+
+    updated.textContent =
+      'Last checked ' +
+      now.toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+  }
+
+  async function checkStatus() {
+
+    try {
+
+      const res = await fetch(
+        QUERY_SERVER + '?cache=' + Date.now(),
+        {
+          cache: 'no-store'
         }
+      );
+
+      if (!res.ok) {
+        throw new Error('Query server returned HTTP ' + res.status);
       }
 
-      async function checkStatus() {
-        try {
-          const [clientPing, res] = await Promise.all([
-            pingClientDirectly(),
-            fetch('https://api.mcsrvstat.us/3/' + SERVER_ADDRESS, { cache: 'no-store' })
-          ]);
+      const data = await res.json();
 
-          if (!res.ok) throw new Error('bad response');
-          const data = await res.json();
+      if (data.online) {
 
-          if (data.online) {
-            setState('online');
-            text.textContent = 'Online';
-            players.textContent = (data.players && typeof data.players.online === 'number')
-              ? `${data.players.online} / ${data.players.max}`
-              : '—';
-            version.textContent = data.version || '—';
-            latency.textContent = clientPing !== null ? clientPing + ' ms' : '—';
-          } else {
-            setState('offline');
-            text.textContent = 'Offline';
-            players.textContent = '—';
-            version.textContent = '—';
-            latency.textContent = '—';
-          }
-        } catch (err) {
-          setState('unknown');
-          text.textContent = 'Unable to check';
+        setState('online');
+
+        text.textContent = 'Online';
+
+        if (
+          data.players &&
+          typeof data.players.online === 'number'
+        ) {
+          players.textContent =
+            `${data.players.online} / ${data.players.max}`;
+        } else {
           players.textContent = '—';
-          version.textContent = '—';
-          latency.textContent = '—';
         }
-        stamp();
+
+        version.textContent =
+          data.version || '—';
+
+        latency.textContent =
+          typeof data.latency === 'number'
+            ? data.latency + ' ms'
+            : '—';
+
+      } else {
+
+        setState('offline');
+
+        text.textContent = 'Offline';
+
+        players.textContent = '—';
+        version.textContent = '—';
+        latency.textContent = '—';
       }
 
-      checkStatus();
-      setInterval(checkStatus, POLL_MS);
-    })();
-  </script>
+    } catch (err) {
+
+      console.error(
+        'Minecraft query failed:',
+        err
+      );
+
+      setState('unknown');
+
+      text.textContent = 'Unable to check';
+
+      players.textContent = '—';
+      version.textContent = '—';
+      latency.textContent = '—';
+    }
+
+    stamp();
+  }
+
+  checkStatus();
+
+  setInterval(
+    checkStatus,
+    POLL_MS
+  );
+
+})();
+</script>
 </body>
 </html>
