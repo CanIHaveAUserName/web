@@ -8,10 +8,10 @@
   <meta name="description" content="Current projects and technical experiments by MalachiteVR." />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="MalachiteVR" />
-  <meta property="og:title" content="My Current Work — MalachiteVR" />
-  <meta property="og:description" content="Minecraft, Chromium, local AI, infrastructure, bots, and VR experiments currently on the workbench." />
+  <meta property="og:title" content="Current Work — MalachiteVR" />
+  <meta property="og:description" content="Servers, networking, web infrastructure, virtualization, automation, local AI, Minecraft, and VR experiments." />
   <meta property="og:url" content="https://malachitevr.win/my-current-work.html" />
-  <title>My Current Work &mdash; MalachiteVR</title>
+  <title>My Current Work — MalachiteVR</title>
   <link rel="stylesheet" href="my-current-work.css" />
 </head>
 <body>
@@ -29,62 +29,99 @@
   </nav>
 
   <div class="wip-bar">&#9888; This website is a work in progress. Some info may not be correct.</div>
-  <marquee behavior="scroll" direction="left" scrollamount="5">*** CURRENT WORK LOG *** MINECRAFT • CHROMIUM • LOCAL AI • INFRASTRUCTURE • VR ***</marquee>
+  <marquee behavior="scroll" direction="left" scrollamount="5">*** CURRENT WORK LOG *** SERVERS • NETWORKING • WEB • VIRTUALIZATION • VR • SOFTWARE ***</marquee>
 
   <main>
     <div class="hero">
-      <div class="eyebrow">Workbench &middot; Projects in motion</div>
+      <div class="eyebrow">Workbench · Systems in motion</div>
       <h1>What I'm <span style="color:#ffff00;">building.</span></h1>
-      <p>A running snapshot of the servers, tools, experiments, and systems currently taking up space on the workbench.</p>
-      <p><strong>Focus areas:</strong> game infrastructure, low-level software, local AI, networking, virtualization, and immersive tech.</p>
+      <p>A running snapshot of the servers, infrastructure, tools, experiments, and hardware projects currently taking up space on the workbench.</p>
+      <p><strong>Focus areas:</strong> system administration, web infrastructure, networking, game servers, virtualization, automation, VR, and local AI.</p>
     </div>
 
     <section>
       <div class="section-label">Active builds</div>
       <h2>Currently in the workshop.</h2>
       <div class="work-grid">
+
         <article class="work-card featured">
-          <span class="number">01</span><span class="status">Idle</span>
+          <span class="number">01</span><span class="status">ACTIVE</span>
           <h3>FantasyJava+</h3>
-          <p class="description">A modded Minecraft 1.20.1 server project under the Malachite LLC banner, built around Forge and a large client setup.</p>
-          <ul class="details"><li>Forge 47.4.20 with a setup of roughly 234 mods</li><li>Performance work with C2ME, Chunky, and Distant Horizons</li><li>Testing Java 17, 21, and 25 compatibility</li></ul>
-          <span class="tag">Minecraft</span><span class="tag">Forge</span><span class="tag">Server performance</span>
+          <p class="description">A heavily modded Minecraft 1.20.1 server project focused on reliability, performance, networking, and keeping a large modded environment playable.</p>
+          <ul class="details">
+            <li>Forge 47.4.20 and a large modded client/server environment</li>
+            <li>Performance tuning with C2ME, Chunky, and server configuration</li>
+            <li>Java and mod compatibility troubleshooting</li>
+            <li>Server monitoring, logs, networking, and infrastructure</li>
+          </ul>
+          <span class="tag">Minecraft</span><span class="tag">Forge</span><span class="tag">Linux</span><span class="tag">Performance</span>
         </article>
+
         <article class="work-card featured">
-          <span class="number">02</span><span class="status">Idle</span>
-          <h3>Chromium from source</h3>
-          <p class="description">Building Chromium on Windows and making the source tree easier to edit and work with in Visual Studio.</p>
-          <ul class="details"><li>Source tree: <code>E:\chromium\src</code></li><li>Using GN, Ninja, and autoninja</li><li>One build reached roughly 79,255 actions</li></ul>
-          <span class="tag">C++</span><span class="tag">Visual Studio</span><span class="tag">GN / Ninja</span>
+          <span class="number">02</span><span class="status">ACTIVE</span>
+          <h3>Minecraft Relay Infrastructure</h3>
+          <p class="description">Building a relay/proxy setup for exposing Minecraft services without directly exposing the home server, using cloud infrastructure and encrypted tunnels.</p>
+          <ul class="details">
+            <li>Oracle Cloud and Azure virtual machines</li>
+            <li>Tailscale networking and exit-node infrastructure</li>
+            <li>HAProxy and TCP forwarding</li>
+            <li>Cloudflare, Playit.gg, firewalling, and connectivity testing</li>
+          </ul>
+          <span class="tag">Networking</span><span class="tag">Tailscale</span><span class="tag">HAProxy</span><span class="tag">Cloud</span>
         </article>
-        <article class="work-card">
-          <span class="number">03</span><span class="status">Finished</span>
-          <h3>Romeo &amp; local AI</h3>
-          <p class="description">Exploring local roleplay and general-purpose AI with Ollama, GGUF models, Hugging Face, and a 64GB RAM / 12GB VRAM workstation.</p>
-          <ul class="details"><li>Local inference with models that keep large knowledge capacity</li><li>Testing model templates and context behavior</li><li>Using the local Ollama chat API at <code>127.0.0.1:11434</code></li></ul>
-          <span class="tag">Ollama</span><span class="tag">GGUF</span><span class="tag">Python</span>
+
+        <article class="work-card featured">
+          <span class="number">03</span><span class="status">ACTIVE</span>
+          <h3>Server Security &amp; Monitoring</h3>
+          <p class="description">Building practical defenses around self-hosted services, including firewall rules, connection monitoring, logging, and automatic blocking of abusive traffic.</p>
+          <ul class="details">
+            <li>Linux firewall and iptables administration</li>
+            <li>Service and connection monitoring</li>
+            <li>Automated IP blocking and log analysis</li>
+            <li>AbuseIPDB reporting and network hygiene</li>
+          </ul>
+          <span class="tag">Sysadmin</span><span class="tag">Security</span><span class="tag">Linux</span><span class="tag">Networking</span>
         </article>
+
         <article class="work-card">
-          <span class="number">04</span><span class="status">Finished</span>
-          <h3>Ollama service proxy</h3>
-          <p class="description">A local proxy layer for connecting Ollama-powered models to services such as JanitorAI while handling API and template differences.</p>
-          <ul class="details"><li>Investigating HTTP 500 responses and template failures</li><li>Keeping the model server local while exposing a compatible interface</li></ul>
-          <span class="tag">REST API</span><span class="tag">Ollama</span><span class="tag">Proxy</span>
-        </article>
-        <article class="work-card">
-          <span class="number">05</span><span class="status">Inactive</span>
-          <h3>Discord modmail bot</h3>
-          <p class="description">A moderation bridge that routes user DMs to a moderator channel and sends moderator replies back to the original user.</p>
-          <ul class="details"><li>Usernames, avatars, images, and files</li><li>Server selection, setup commands, and moderator-only channels</li><li>Built with Python 3.13.15</li></ul>
-          <span class="tag">Python</span><span class="tag">Discord</span><span class="tag">Automation</span>
-        </article>
-        <article class="work-card">
-          <span class="number">06</span><span class="status planning">EXPLORING</span>
-          <h3>SlimeVR / VRChat tracking</h3>
-          <p class="description">Improving wireless tracking reliability with HaritoraX 2, SlimeVR, OSC, and Bluetooth interference testing.</p>
-          <ul class="details"><li>Testing USB 3.x, router proximity, and metal interference</li><li>Considering a dedicated Bluetooth adapter and Ethernet tracking laptop</li></ul>
+          <span class="number">04</span><span class="status">ACTIVE</span>
+          <h3>VR Tracking Infrastructure</h3>
+          <p class="description">Troubleshooting and integrating HaritoraX, SlimeVR, OSC, VMT, and VRChat tracking systems, including wireless reliability and coordinate problems.</p>
+          <ul class="details">
+            <li>HaritoraX 2A and SlimeVR</li>
+            <li>OSC and Virtual Motion Tracker workflows</li>
+            <li>Bluetooth and USB interference testing</li>
+            <li>Tracking orientation, centering, and calibration</li>
+          </ul>
           <span class="tag">VR</span><span class="tag">OSC</span><span class="tag">Bluetooth</span>
         </article>
+
+        <article class="work-card">
+          <span class="number">05</span><span class="status">ACTIVE</span>
+          <h3>Local AI &amp; Ollama</h3>
+          <p class="description">Running and experimenting with local AI models, APIs, GGUF formats, model templates, and self-hosted inference on consumer hardware.</p>
+          <ul class="details">
+            <li>Ollama and local model serving</li>
+            <li>GGUF models and large-parameter quantized models</li>
+            <li>Python/API integration and proxy experiments</li>
+            <li>Context, templates, and inference behavior</li>
+          </ul>
+          <span class="tag">AI</span><span class="tag">Ollama</span><span class="tag">Python</span><span class="tag">GGUF</span>
+        </article>
+
+        <article class="work-card">
+          <span class="number">06</span><span class="status">ACTIVE</span>
+          <h3>Web Infrastructure</h3>
+          <p class="description">Maintaining and developing malachitevr.win, including HTML/CSS, project pages, technical guides, GitHub-hosted source, and web-facing services.</p>
+          <ul class="details">
+            <li>HTML and CSS development</li>
+            <li>GitHub repository management</li>
+            <li>Technical documentation and guides</li>
+            <li>Domain and service integration</li>
+          </ul>
+          <span class="tag">Webmaster</span><span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">GitHub</span>
+        </article>
+
       </div>
     </section>
 
@@ -92,20 +129,59 @@
       <div class="section-label">Systems lab</div>
       <h2>Infrastructure and experiments.</h2>
       <div class="work-grid">
-        <article class="work-card"><span class="number">LAB-01</span><h3>Virtualization &amp; passthrough</h3><p class="description">Hyper-V, GPU-P, DDA, and Proxmox VE 9 experiments involving GPU passthrough, NVMe passthrough, CPU assignment, and guest driver files.</p><span class="tag">Hyper-V</span><span class="tag">GPU-P</span><span class="tag">Proxmox</span></article>
-        <article class="work-card"><span class="number">LAB-02</span><h3>Networking from home to cloud</h3><p class="description">Working with Tailscale exit nodes on Azure ARM VMs, Cloudflare/cloudflared, Playit.gg, Spectrum, and Wi-Fi 6 networking for game services.</p><span class="tag">Tailscale</span><span class="tag">Azure</span><span class="tag">Cloudflare</span></article>
-        <article class="work-card"><span class="number">LAB-03</span><h3>Remote desktop &amp; streaming</h3><p class="description">Tuning Parsec from Host to Client around latency, bitrate, resolution, and 60 FPS streaming.</p><span class="tag">Parsec</span><span class="tag">60 FPS</span><span class="tag">Networking</span></article>
-        <article class="work-card"><span class="number">LAB-04</span><h3>GPU stability</h3><p class="description">Comparing NVIDIA driver branches and tuning the RTX 3060 for VR workloads, including a memory-clock reduction that improved texture stability.</p><span class="tag">RTX 3060</span><span class="tag">VR</span><span class="tag">Drivers</span></article>
+
+        <article class="work-card">
+          <span class="number">LAB-01</span>
+          <h3>Virtualization &amp; GPU Passthrough</h3>
+          <p class="description">Experimenting with Hyper-V, GPU-P, DDA, and Proxmox VE for virtual machines, CPU allocation, GPU passthrough, NVMe passthrough, and guest driver handling.</p>
+          <span class="tag">Hyper-V</span><span class="tag">GPU-P</span><span class="tag">Proxmox</span>
+        </article>
+
+        <article class="work-card">
+          <span class="number">LAB-02</span>
+          <h3>Cloud Server Administration</h3>
+          <p class="description">Deploying and maintaining Ubuntu VMs on cloud platforms for networking, relays, exit nodes, and other self-hosted infrastructure.</p>
+          <span class="tag">Oracle Cloud</span><span class="tag">Azure</span><span class="tag">Ubuntu</span>
+        </article>
+
+        <article class="work-card">
+          <span class="number">LAB-03</span>
+          <h3>Remote Desktop &amp; Streaming</h3>
+          <p class="description">Tuning Parsec and remote-access infrastructure around latency, bitrate, resolution, frame rate, and network conditions.</p>
+          <span class="tag">Parsec</span><span class="tag">Networking</span><span class="tag">Performance</span>
+        </article>
+
+        <article class="work-card">
+          <span class="number">LAB-04</span>
+          <h3>Hardware &amp; Performance Tuning</h3>
+          <p class="description">Troubleshooting PCs, GPUs, thermals, drivers, memory, storage, and workload-specific performance instead of accepting mysterious black-box behavior.</p>
+          <span class="tag">Hardware</span><span class="tag">GPU</span><span class="tag">Diagnostics</span>
+        </article>
+
+        <article class="work-card">
+          <span class="number">LAB-05</span>
+          <h3>Python Automation</h3>
+          <p class="description">Writing small tools, services, proxies, bridges, bots, and automation scripts to make otherwise repetitive systems work together.</p>
+          <span class="tag">Python</span><span class="tag">Automation</span><span class="tag">APIs</span>
+        </article>
+
+        <article class="work-card">
+          <span class="number">LAB-06</span>
+          <h3>Networking &amp; Protocols</h3>
+          <p class="description">Hands-on work with TCP, UDP, SSH, OSC, HTTP, DNS, tunnels, ports, packet capture, and the wonderful art of asking a packet where it went.</p>
+          <span class="tag">TCP/IP</span><span class="tag">UDP</span><span class="tag">SSH</span>
+        </article>
+
       </div>
     </section>
 
     <section>
       <div class="section-label">Lab notes</div>
       <h2>What ties it together.</h2>
-      <div class="note"><strong>One workstation, many directions.</strong> The common thread is practical systems work: making software build, making servers perform, making local services cooperate, and making hardware do useful things without hiding the interesting details. Don't let people tell you what your PC can and can't do. It is very much capable of a lot.</div>
+      <div class="note"><strong>Build it. Break it. Figure out why.</strong> The common thread isn't one programming language or one platform. It's systems work: keeping servers alive, making networks cooperate, getting software to talk to other software, squeezing performance out of hardware, and learning what is happening underneath the interface.</div>
     </section>
   </main>
 
-  <footer><span>MalachiteeVR &mdash; current work log</span><a href="index.html">Return to portfolio</a></footer>
+  <footer><span>MalachiteeVR — current work log</span><a href="index.html">Return to portfolio</a></footer>
 </body>
 </html>
