@@ -189,13 +189,28 @@
         updated.textContent = 'Last checked ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
       }
 
-      async function checkStatus() {
+      async function pingClientDirectly() {
         const started = performance.now();
         try {
-          const res = await fetch('https://api.mcsrvstat.us/3/' + SERVER_ADDRESS, { cache: 'no-store' });
+          await fetch(`https://${SERVER_ADDRESS}/?cache_buster=${Date.now()}`, {
+            mode: 'no-cors',
+            cache: 'no-store'
+          });
+          return Math.round(performance.now() - started);
+        } catch (err) {
+          return null;
+        }
+      }
+
+      async function checkStatus() {
+        try {
+          const [clientPing, res] = await Promise.all([
+            pingClientDirectly(),
+            fetch('https://api.mcsrvstat.us/3/' + SERVER_ADDRESS, { cache: 'no-store' })
+          ]);
+
           if (!res.ok) throw new Error('bad response');
           const data = await res.json();
-          const elapsed = Math.round(performance.now() - started);
 
           if (data.online) {
             setState('online');
@@ -204,7 +219,7 @@
               ? `${data.players.online} / ${data.players.max}`
               : '—';
             version.textContent = data.version || '—';
-            latency.textContent = elapsed + ' ms';
+            latency.textContent = clientPing !== null ? clientPing + ' ms' : '—';
           } else {
             setState('offline');
             text.textContent = 'Offline';
