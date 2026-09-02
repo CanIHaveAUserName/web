@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Server Infrastructure & Security</title>
+
+    <style>
+        :root {
+            --bg: #0b0f14;
+            --card: #121821;
+            --card-hover: #18212d;
+            --text: #e8edf3;
+            --muted: #9aa7b5;
+            --accent: #72d6a1;
+            --accent-dark: #3ca875;
+            --border: #26313d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        header {
+            padding: 80px 20px 65px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+            background:
+                radial-gradient(circle at top, #173326 0%, transparent 45%),
+                var(--bg);
+        }
+
+        header h1 {
+            font-size: clamp(2.2rem, 6vw, 4rem);
+            margin-bottom: 15px;
+        }
+
+        header p {
+            max-width: 780px;
+            margin: auto;
+            color: var(--muted);
+            font-size: 1.1rem;
+        }
+
+        .badge {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 6px 14px;
+            border: 1px solid var(--accent-dark);
+            border-radius: 999px;
+            color: var(--accent);
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        main {
+            width: min(1100px, 92%);
+            margin: 50px auto;
+        }
+
+        section {
+            margin-bottom: 50px;
+        }
+
+        h2 {
+            margin-bottom: 18px;
+            font-size: 1.8rem;
+        }
+
+        h3 {
+            margin-bottom: 8px;
+            color: var(--accent);
+        }
+
+        p {
+            color: var(--muted);
+            margin-bottom: 15px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 18px;
+        }
+
+        .card {
+            padding: 25px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            transition: 0.2s ease;
+        }
+
+        .card:hover {
+            background: var(--card-hover);
+            transform: translateY(-3px);
+        }
+
+        .card p {
+            margin-bottom: 0;
+            font-size: 0.95rem;
+        }
+
+        .highlight {
+            padding: 30px;
+            background: #101d18;
+            border: 1px solid var(--accent-dark);
+            border-radius: 12px;
+            margin-top: 25px;
+        }
+
+        .highlight strong {
+            color: var(--text);
+        }
+
+        ul {
+            padding-left: 25px;
+            color: var(--muted);
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .requirements {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .requirement {
+            text-align: center;
+            padding: 20px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+
+        .requirement .value {
+            display: block;
+            color: var(--accent);
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        footer {
+            padding: 40px 20px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <span class="badge">AArch64 Infrastructure Project</span>
+
+    <h1>Server Infrastructure & Security</h1>
+
+    <p>
+        A centralized ARM64 infrastructure server used to operate
+        web services, security monitoring, network services, and
+        management tools for a collection of personal servers and
+        virtual machines.
+    </p>
+</header>
+
+<main>
+
+    <section>
+        <h2>Project Overview</h2>
+
+        <p>
+            This project provides centralized infrastructure for managing
+            and protecting several servers and virtual machines. The
+            proposed AArch64 server would operate continuously as a
+            dedicated infrastructure node rather than as a development
+            environment.
+        </p>
+
+        <p>
+            The server would host web-based services, monitoring
+            applications, security tools, network utilities, and other
+            infrastructure software used by the surrounding server
+            environment.
+        </p>
+
+        <div class="highlight">
+            <strong>Why a dedicated server?</strong>
+
+            <p>
+                Keeping these services separate from the individual
+                production servers makes the infrastructure easier to
+                monitor and maintain. It also prevents security and
+                management workloads from consuming resources needed by
+                the primary applications hosted on those systems.
+            </p>
+        </div>
+    </section>
+
+
+    <section>
+        <h2>What the CPU Resources Are Used For</h2>
+
+        <div class="grid">
+
+            <div class="card">
+                <h3>Security Monitoring</h3>
+
+                <p>
+                    Run security monitoring and analysis software that
+                    observes network activity, system events, logs, and
+                    other telemetry from managed servers and virtual
+                    machines.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>Web Services</h3>
+
+                <p>
+                    Host websites, dashboards, administrative interfaces,
+                    APIs, documentation, and other web-based services
+                    supporting the infrastructure.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>Server Monitoring</h3>
+
+                <p>
+                    Collect and process CPU, memory, disk, network,
+                    uptime, and application metrics from other servers
+                    and VMs.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>Log Processing</h3>
+
+                <p>
+                    Receive, process, filter, and retain logs generated
+                    by multiple servers and virtual machines.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>Network Services</h3>
+
+                <p>
+                    Provide centralized network-related services and
+                    infrastructure utilities used by the managed
+                    environment.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>Security Automation</h3>
+
+                <p>
+                    Run automated security checks, alerting systems,
+                    IP reputation checks, service health checks, and
+                    other defensive automation.
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+
+    <section>
+        <h2>Planned Services</h2>
+
+        <ul>
+            <li>Web applications and infrastructure dashboards</li>
+            <li>Server and VM monitoring</li>
+            <li>Centralized log collection and processing</li>
+            <li>Security monitoring and alerting</li>
+            <li>Network security utilities</li>
+            <li>Automated server health checks</li>
+            <li>IP reputation and abuse monitoring</li>
+            <li>Infrastructure management services</li>
+            <li>Security-related automation</li>
+            <li>Service uptime and availability monitoring</li>
+        </ul>
+    </section>
+
+
+    <section>
+        <h2>Why AArch64?</h2>
+
+        <p>
+            AArch64 provides an opportunity to operate these services on
+            ARM64 infrastructure while keeping the environment separate
+            from the x86_64 systems used elsewhere in the infrastructure.
+        </p>
+
+        <p>
+            Many modern server applications and container images support
+            ARM64, making AArch64 practical for hosting web services,
+            monitoring platforms, security tooling, and network services.
+        </p>
+
+        <p>
+            Using a dedicated ARM64 machine also provides architectural
+            diversity, which is useful for identifying compatibility
+            issues and avoiding dependence on a single CPU architecture.
+        </p>
+    </section>
+
+
+    <section>
+        <h2>Why CPU Resources Matter</h2>
+
+        <p>
+            Although many of the individual services are relatively
+            lightweight, CPU requirements increase as services are
+            combined onto a centralized infrastructure node.
+        </p>
+
+        <p>
+            The server will simultaneously handle web requests, process
+            logs, collect monitoring data, perform security analysis,
+            run automated checks, and maintain background services.
+        </p>
+
+        <p>
+            Multiple CPU cores allow these workloads to operate
+            concurrently without one service significantly affecting
+            another.
+        </p>
+
+        <div class="highlight">
+            <strong>Primary CPU workloads:</strong>
+
+            <p>
+                Log processing, security analysis, monitoring,
+                web applications, automated checks, and concurrent
+                infrastructure services.
+            </p>
+        </div>
+    </section>
+
+
+    <section>
+        <h2>Expected Server Requirements</h2>
+
+        <div class="requirements">
+
+            <div class="requirement">
+                <span class="value">AArch64</span>
+                Architecture
+            </div>
+
+            <div class="requirement">
+                <span class="value">4+ Cores</span>
+                CPU
+            </div>
+
+            <div class="requirement">
+                <span class="value">8–16 GB</span>
+                RAM
+            </div>
+
+            <div class="requirement">
+                <span class="value">Linux</span>
+                Operating System
+            </div>
+
+            <div class="requirement">
+                <span class="value">24/7</span>
+                Operation
+            </div>
+
+        </div>
+    </section>
+
+
+    <section>
+        <h2>Infrastructure Design</h2>
+
+        <p>
+            The AArch64 server will function as a centralized supporting
+            node for the rest of the infrastructure.
+        </p>
+
+        <p>
+            Rather than hosting the primary applications themselves,
+            managed servers and VMs can forward monitoring information,
+            logs, and security telemetry to the ARM64 server. This
+            creates a separation between application workloads and
+            infrastructure management.
+        </p>
+
+        <div class="grid">
+
+            <div class="card">
+                <h3>Servers</h3>
+                <p>
+                    Application and game servers generate logs,
+                    metrics, and security telemetry.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>Virtual Machines</h3>
+                <p>
+                    VMs provide additional infrastructure and services
+                    monitored by the central node.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>AArch64 Node</h3>
+                <p>
+                    Centralized monitoring, security, web services,
+                    automation, and infrastructure management.
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+
+    <section>
+        <h2>Security & Responsible Use</h2>
+
+        <p>
+            The server will be used for defensive security and
+            infrastructure management. Security tools will be operated
+            against systems that I own or am authorized to administer.
+        </p>
+
+        <p>
+            Services will be configured with appropriate access controls,
+            logging, monitoring, and resource limits. The system will
+            not be used for unauthorized scanning, exploitation, or
+            attacks against third-party systems.
+        </p>
+    </section>
+
+
+    <section>
+        <h2>Project Goals</h2>
+
+        <div class="grid">
+
+            <div class="card">
+                <h3>01 · Centralize</h3>
+                <p>
+                    Consolidate monitoring and infrastructure services
+                    into a dedicated node.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>02 · Protect</h3>
+                <p>
+                    Improve visibility into security events and
+                    infrastructure health.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>03 · Monitor</h3>
+                <p>
+                    Maintain continuous visibility into servers,
+                    virtual machines, and network services.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>04 · Operate</h3>
+                <p>
+                    Provide reliable 24/7 supporting infrastructure
+                    for the wider server environment.
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+
+    <section>
+        <h2>Why OSUOSL?</h2>
+
+        <p>
+            OSUOSL infrastructure would provide a reliable, continuously
+            available AArch64 environment for hosting these supporting
+            services. This would allow the infrastructure to remain
+            operational without depending on one of the primary servers
+            that it is responsible for monitoring.
+        </p>
+
+        <p>
+            The requested system would be used as a long-running
+            infrastructure node with a clear purpose: providing
+            centralized web, monitoring, security, and management
+            services for an actively maintained collection of servers
+            and virtual machines.
+        </p>
+    </section>
+
+</main>
+
+<footer>
+    AArch64 Server Infrastructure · Web Services · Monitoring · Security
+</footer>
+
+</body>
+</html>
